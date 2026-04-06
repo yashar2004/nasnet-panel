@@ -35,27 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Nx Cloud
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-        run: |
-          if [ -n "$NX_CLOUD_ACCESS_TOKEN" ]; then
-            echo "NX_CLOUD_ACCESS_TOKEN=$NX_CLOUD_ACCESS_TOKEN" >> $GITHUB_ENV
-            echo "✓ Nx Cloud enabled"
-          fi
-
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --no-audit --no-fund
 
       - name: Run lint (all projects)
         run: npx nx run-many -t lint
@@ -63,11 +50,7 @@ jobs:
       - name: Run typecheck (all projects)
         run: npx nx run-many -t typecheck
 
-      - name: Setup Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version-file: apps/backend/go.mod
-          cache-dependency-path: apps/backend/go.sum
+      - uses: ./.github/actions/setup-go-backend
 
       - name: Go vulnerability scan
         working-directory: apps/backend
@@ -91,7 +74,7 @@ jobs:
         run: npx nx run connect:build-storybook
 
       - name: Upload Storybook Artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         with:
           name: storybook
           path: |
@@ -100,9 +83,9 @@ jobs:
             dist/storybook/connect
           if-no-files-found: ignore
 
-      - name: Nx Cloud fix recommendations
-        run: npx nx fix-ci
+      - name: CI follow-up
         if: always()
+        run: echo "Review the workflow logs for any warnings or skipped tasks"
 
   # ============================================================================
   # Bundle Size Analysis
@@ -114,20 +97,17 @@ jobs:
     timeout-minutes: 15
     needs: validate
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - run: npm ci --no-audit --no-fund
 
       - name: Build with analysis
         run: npm run build:check
 
       - name: Upload bundle stats
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         with:
           name: bundle-stats
           path: |
@@ -151,17 +131,14 @@ jobs:
           - linux/arm64
           - linux/arm/v7
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - run: npm ci --no-audit --no-fund
-
-      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image (${{ matrix.platform }})
         run: |
@@ -183,17 +160,14 @@ jobs:
     needs: validate
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.full_matrix == 'true')
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - run: npm ci --no-audit --no-fund
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -203,7 +177,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload E2E report
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: e2e-report

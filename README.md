@@ -351,14 +351,14 @@ _Confirm on device (reset button or cold reboot on x86)_
 ### Step 3: Configure Registry
 
 ```routeros
-/container/config set registry-url=https://registry-1.docker.io tmpdir=disk1/tmp
+/container/config set registry-url=https://ghcr.io tmpdir=disk1/tmp
 ```
 
 ### Step 4: Deploy Container
 
 ```routeros
 # Add container
-/container/add remote-image=joinnasnet/nnc:latest interface=veth1 \
+/container/add remote-image=ghcr.io/nasnet-community/nasnet-panel:latest interface=veth1 \
   root-dir=disk1/images/nnc name=nnc start-on-boot=yes logging=yes
 
 # Wait for download, then start

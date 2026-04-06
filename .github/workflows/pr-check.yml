@@ -37,8 +37,8 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
       storybook: ${{ steps.filter.outputs.storybook }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: dorny/paths-filter@55c2c1448f86e01eaae002a5a3a9624417608d84 # v3.0.2
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -76,25 +76,14 @@ jobs:
       affected-test: ${{ steps.affected.outputs.test }}
       affected-build: ${{ steps.affected.outputs.build }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Determine affected projects
         id: affected
@@ -110,34 +99,14 @@ jobs:
     needs: [changes, setup]
     if: needs.setup.outputs.affected-lint != ''
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Nx Cloud
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-        run: |
-          if [ -n "$NX_CLOUD_ACCESS_TOKEN" ]; then
-            echo "NX_CLOUD_ACCESS_TOKEN=$NX_CLOUD_ACCESS_TOKEN" >> $GITHUB_ENV
-            echo "✓ Nx Cloud enabled"
-          fi
-
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Run lint (affected)
         run: npx nx affected -t lint --base=origin/${{ github.base_ref }}
@@ -149,33 +118,14 @@ jobs:
     needs: [changes, setup]
     if: needs.changes.outputs.frontend == 'true' || needs.changes.outputs.schema == 'true'
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Nx Cloud
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-        run: |
-          if [ -n "$NX_CLOUD_ACCESS_TOKEN" ]; then
-            echo "NX_CLOUD_ACCESS_TOKEN=$NX_CLOUD_ACCESS_TOKEN" >> $GITHUB_ENV
-          fi
-
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Run typecheck (affected)
         run: npx nx affected -t typecheck --base=origin/${{ github.base_ref }}
@@ -187,25 +137,14 @@ jobs:
     needs: [changes]
     if: needs.changes.outputs.schema == 'true' || needs.changes.outputs.frontend == 'true'
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Check TypeScript codegen sync
         run: |
@@ -228,12 +167,8 @@ jobs:
             exit 1
           fi
 
-      - name: Setup Go
-        if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.schema == 'true'
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version-file: apps/backend/go.mod
-          cache-dependency-path: apps/backend/go.sum
+      - if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.schema == 'true'
+        uses: ./.github/actions/setup-go-backend
 
       - name: Check Go codegen sync
         if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.schema == 'true'
@@ -254,39 +189,20 @@ jobs:
     needs: [changes, setup]
     if: needs.setup.outputs.affected-test != ''
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Nx Cloud
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-        run: |
-          if [ -n "$NX_CLOUD_ACCESS_TOKEN" ]; then
-            echo "NX_CLOUD_ACCESS_TOKEN=$NX_CLOUD_ACCESS_TOKEN" >> $GITHUB_ENV
-          fi
-
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Run frontend tests (affected)
         run: npx nx affected -t test --base=origin/${{ github.base_ref }} --coverage
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: frontend-coverage
@@ -318,17 +234,14 @@ jobs:
     needs: [changes]
     if: needs.changes.outputs.backend == 'true'
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version-file: apps/backend/go.mod
-          cache-dependency-path: apps/backend/go.sum
+      - uses: ./.github/actions/setup-go-backend
 
-      - uses: golangci/golangci-lint-action@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v6.5.2
+      - uses: golangci/golangci-lint-action@v6
         with:
           version: latest
           working-directory: apps/backend
@@ -341,16 +254,12 @@ jobs:
     needs: [changes]
     if: needs.changes.outputs.backend == 'true'
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version-file: apps/backend/go.mod
-          cache-dependency-path: apps/backend/go.sum
+      - uses: ./.github/actions/setup-go-backend
 
       - name: Go vet
         working-directory: apps/backend
@@ -363,7 +272,7 @@ jobs:
           go tool cover -func=coverage.out
 
       - name: Upload Go coverage
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-coverage
@@ -390,16 +299,12 @@ jobs:
     needs: [changes]
     if: needs.changes.outputs.backend == 'true'
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
-        with:
-          go-version-file: apps/backend/go.mod
-          cache-dependency-path: apps/backend/go.sum
+      - uses: ./.github/actions/setup-go-backend
 
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
@@ -420,33 +325,14 @@ jobs:
     # Run build even if lint/test are skipped (no affected projects or no changes)
     if: always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Nx Cloud
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-        run: |
-          if [ -n "$NX_CLOUD_ACCESS_TOKEN" ]; then
-            echo "NX_CLOUD_ACCESS_TOKEN=$NX_CLOUD_ACCESS_TOKEN" >> $GITHUB_ENV
-          fi
-
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Build (affected)
         run: npx nx affected -t build --base=origin/${{ github.base_ref }}
@@ -474,25 +360,14 @@ jobs:
       !contains(needs.*.result, 'cancelled') &&
       (needs.changes.outputs.storybook == 'true' || needs.changes.outputs.frontend == 'true')
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
 
       - name: Build Storybook (Primitives)
         run: npx nx run ui-primitives:build-storybook
@@ -501,7 +376,7 @@ jobs:
         run: npx nx run ui-patterns:build-storybook
 
       - name: Upload Storybook Artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@v4
         with:
           name: storybook-preview
           path: |
@@ -525,25 +400,14 @@ jobs:
       !contains(needs.*.result, 'cancelled') &&
       (needs.changes.outputs.backend == 'true' || needs.changes.outputs.docker == 'true')
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-        id: npm-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
-
-      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image (amd64 only for PR)
         run: |
@@ -638,7 +502,6 @@ jobs:
 
           echo "✓ All PR checks passed (skipped jobs are acceptable)"
 
-      - name: Nx Cloud fix recommendations
-        if: always()
+      - name: CI follow-up
         run: |
-          echo "Check Nx Cloud dashboard for detailed build insights and fix recommendations"
+          echo "Check the workflow logs for any failed or skipped checks"

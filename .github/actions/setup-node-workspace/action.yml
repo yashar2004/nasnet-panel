@@ -1,0 +1,31 @@
+name: Setup Node Workspace
+description: Set up Node.js and restore workspace dependencies.
+
+inputs:
+  node-version:
+    description: Node.js version to install
+    required: false
+    default: '20'
+  install-command:
+    description: Command used to install dependencies on cache miss
+    required: false
+    default: npm ci --no-audit --no-fund
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - uses: actions/cache@v4
+      id: npm-cache
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Install dependencies
+      if: steps.npm-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: ${{ inputs.install-command }}

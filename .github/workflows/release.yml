@@ -12,15 +12,10 @@ on:
         description: 'Release tag (e.g., v1.0.0)'
         required: true
         type: string
-      skip_signing:
-        description: 'Skip image signing (for testing)'
-        type: boolean
-        default: false
 
 permissions:
   contents: write
   packages: write
-  id-token: write # Required for cosign keyless signing
 
 concurrency:
   group: release-${{ github.ref }}
@@ -42,25 +37,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           filter: tree:0
           fetch-depth: 0
 
-      - name: Setup Nx Cloud
-        env:
-          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-        run: |
-          if [ -n "$NX_CLOUD_ACCESS_TOKEN" ]; then
-            echo "NX_CLOUD_ACCESS_TOKEN=$NX_CLOUD_ACCESS_TOKEN" >> $GITHUB_ENV
-          fi
-
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - run: npm ci --no-audit --no-fund
 
       - name: Run full CI validation
         run: npm run ci
@@ -88,23 +72,20 @@ jobs:
           - platform: linux/arm/v7
             suffix: armv7
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
-      - run: npm ci --no-audit --no-fund
-
-      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
       - name: Set lowercase repository
         run: echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       - name: Login to GHCR
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -112,7 +93,7 @@ jobs:
 
       - name: Extract metadata
         id: meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}
           tags: |
@@ -125,7 +106,7 @@ jobs:
 
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: apps/backend/Dockerfile
@@ -135,8 +116,6 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ github.ref_name }}-${{ matrix.suffix }}
           cache-from: type=gha,scope=${{ matrix.suffix }}
           cache-to: type=gha,mode=max,scope=${{ matrix.suffix }}
-          provenance: true
-          sbom: true
 
       - name: Check image size
         run: |
@@ -164,7 +143,7 @@ jobs:
         run: echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       - name: Login to GHCR
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -212,74 +191,23 @@ jobs:
             docker manifest push $IMAGE:$MAJOR_MINOR
           fi
 
-  # ============================================================================
-  # Sign Container Images with Cosign
-  # ============================================================================
-
-  sign:
-    name: Sign Container Images
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: manifest
-    if: ${{ !inputs.skip_signing }}
-    steps:
-      - name: Set lowercase repository
-        run: echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-
-      - name: Login to GHCR
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install cosign
-        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
-        with:
-          cosign-release: 'v2.2.4'
-
-      - name: Sign images with cosign (keyless)
-        env:
-          COSIGN_EXPERIMENTAL: 1
-        run: |
-          IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ github.ref_name }}
-
-          # Sign with keyless (OIDC identity)
-          cosign sign --yes $IMAGE
-
-          echo "✓ Image signed: $IMAGE"
-
-      - name: Verify signature
-        run: |
-          IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ github.ref_name }}
-          cosign verify $IMAGE \
-            --certificate-identity-regexp=".*" \
-            --certificate-oidc-issuer-regexp=".*"
-
-  # ============================================================================
-  # Generate Changelog and Create GitHub Release
-  # ============================================================================
-
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [manifest, sign]
+    needs: manifest
     if: always() && needs.manifest.result == 'success'
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set lowercase repository
         run: echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      - uses: ./.github/actions/setup-node-workspace
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - run: npm ci --no-audit --no-fund
 
       - name: Generate changelog with Nx Release
         run: npx nx release changelog ${{ github.ref_name }}
@@ -302,7 +230,7 @@ jobs:
           echo "**Supported Architectures:** \`linux/amd64\`, \`linux/arm64\`, \`linux/arm/v7\`" >> CHANGELOG.md
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+        uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ github.ref_name }}
           body_path: CHANGELOG.md
@@ -338,7 +266,3 @@ jobs:
           echo "- linux/amd64 ✓"
           echo "- linux/arm64 ✓"
           echo "- linux/arm/v7 ✓"
-          echo ""
-          echo "### Security"
-          echo "- Container images signed with cosign (keyless)"
-          echo "- SBOM and provenance attached"

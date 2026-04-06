@@ -83,7 +83,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": ".",
-        "command": "docker buildx build --platform=${PLATFORMS:-linux/amd64,linux/arm64,linux/arm/v7} -f apps/backend/Dockerfile --tag ghcr.io/$GHCR_REPOSITORY:latest ${DOCKERHUB_REPO:+--tag docker.io/$DOCKERHUB_REPO:latest} ${PUSH:+--push} ."
+        "command": "docker buildx build --platform=${PLATFORMS:-linux/amd64,linux/arm64,linux/arm/v7} -f apps/backend/Dockerfile --tag ghcr.io/$GHCR_REPOSITORY:latest ${PUSH:+--push} ."
       }
     },
     "docker:build-local": {
