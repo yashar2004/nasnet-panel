@@ -258,16 +258,6 @@ const config: Config = {
           ],
         },
         {
-          type: 'dropdown',
-          label: 'Components',
-          position: 'left',
-          items: [
-            { label: 'UI Primitives', href: `${baseUrl}storybook/primitives/` },
-            { label: 'UI Patterns', href: `${baseUrl}storybook/patterns/` },
-            { label: 'Connect App', href: `${baseUrl}storybook/connect/` },
-          ],
-        },
-        {
           label: 'API Reference',
           to: '/api',
           position: 'left',
@@ -275,11 +265,6 @@ const config: Config = {
         {
           label: 'Changelog',
           href: 'https://github.com/nasnet-community/nasnet-panel/releases',
-          position: 'right',
-        },
-        {
-          label: 'Nx Graph',
-          href: `${baseUrl}nx-graph/`,
           position: 'right',
         },
         {
@@ -315,17 +300,14 @@ const config: Config = {
           title: 'API',
           items: [
             { label: 'Schema Overview', to: '/api' },
-            { label: 'Queries', to: '/category/queries' },
-            { label: 'Mutations', to: '/category/mutations' },
+            { label: 'Queries', to: '/api/category/queries' },
+            { label: 'Mutations', to: '/api/category/mutations' },
           ],
         },
         {
           title: 'More',
           items: [
             { label: 'GitHub', href: 'https://github.com/nasnet-community/nasnet-panel' },
-            { label: 'Storybook (Primitives)', href: `${baseUrl}storybook/primitives/` },
-            { label: 'Storybook (Patterns)', href: `${baseUrl}storybook/patterns/` },
-            { label: 'Nx Graph', href: `${baseUrl}nx-graph/` },
             {
               label: 'Architecture',
               href: 'https://github.com/nasnet-community/nasnet-panel/tree/main/Docs/architecture',
