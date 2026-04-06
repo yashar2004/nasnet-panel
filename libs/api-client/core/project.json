@@ -1,5 +1,5 @@
 {
-  "name": "@nas-net/core",
+  "name": "@nasnet/core",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api-client/core/src",
   "projectType": "library",

@@ -1,5 +1,5 @@
 {
-  "name": "@nas-net/shared",
+  "name": "@nasnet/shared",
   "$schema": "./node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "shared/src",
   "projectType": "library",

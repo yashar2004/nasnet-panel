@@ -70,7 +70,7 @@ export default defineConfig({
 
   // Run local dev server before starting tests
   webServer: {
-    command: 'npx nx run @nas-net/connect:preview',
+    command: 'npx nx run @nasnet/connect:preview',
     url: 'http://localhost:4200',
     reuseExistingServer: !process.env.CI,
     cwd: workspaceRoot,

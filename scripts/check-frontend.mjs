@@ -22,7 +22,7 @@ const outputFile = outputPath ?? 'check-frontend-output.txt';
 const splitLines = splitArg ? parseInt(splitArg, 10) : 1000;
 
 const exclude =
-  '@nas-net/source,backend,connectpoc,star-setup-docker,star-setup-web,core-ui-qwik,ros-cmd-generator,star-context,star-setup,@nas-net/connectpoc-e2e';
+  '@nasnet/source,backend,connectpoc,star-setup-docker,star-setup-web,core-ui-qwik,ros-cmd-generator,star-context,star-setup,@nasnet/connectpoc-e2e';
 
 function elapsed(start) {
   const s = ((Date.now() - start) / 1000).toFixed(1);
@@ -37,7 +37,7 @@ function run(command) {
     child.stdout.on('data', (d) => chunks.push(d));
     child.stderr.on('data', (d) => chunks.push(d));
     child.on('close', (code) =>
-      resolve({ ok: code === 0, output: Buffer.concat(chunks).toString(), time: elapsed(start) }),
+      resolve({ ok: code === 0, output: Buffer.concat(chunks).toString(), time: elapsed(start) })
     );
   });
 }

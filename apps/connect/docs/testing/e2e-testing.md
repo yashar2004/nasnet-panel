@@ -59,7 +59,7 @@ export default defineConfig({
 
   // Auto-start the preview server
   webServer: {
-    command: 'npx nx run @nas-net/connect:preview',
+    command: 'npx nx run @nasnet/connect:preview',
     url: 'http://localhost:4200',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

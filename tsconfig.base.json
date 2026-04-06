@@ -16,7 +16,7 @@
     "allowUmdGlobalAccess": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@nas-net/source"],
+    "customConditions": ["@nasnet/source"],
     "paths": {
       "@nasnet/core/*": ["./libs/core/*/src"],
       "@nasnet/core/types/*": ["./libs/core/types/src/*"],
