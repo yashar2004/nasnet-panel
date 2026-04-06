@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Activity } from 'lucide-react';
 
@@ -102,18 +102,16 @@ export const DesktopLayout: Story = {
     forcePlatform: 'desktop',
     header: MockDesktopHeader,
     sidebar: MockSidebar,
-    sidebarCollapsed: false,
     children: MockPageContent,
   },
 };
 
-export const DesktopCollapsedSidebar: Story = {
-  name: 'Desktop Layout — Sidebar Collapsed',
+export const DesktopWithSidebar: Story = {
+  name: 'Desktop Layout — With Sidebar',
   args: {
     forcePlatform: 'desktop',
     header: MockDesktopHeader,
     sidebar: MockSidebar,
-    sidebarCollapsed: true,
     children: MockPageContent,
   },
 };
@@ -188,32 +186,12 @@ export const MobileWithBanner: Story = {
   },
 };
 
-/**
- * Interactive story: sidebar collapse is controlled by local state.
- * Demonstrates wiring `sidebarCollapsed` + `onSidebarToggle` the same way
- * the app layer connects the Zustand sidebar store.
- */
-export const InteractiveDesktop: Story = {
-  name: 'Interactive — Sidebar Toggle (Desktop)',
-  render: () => {
-    const [collapsed, setCollapsed] = useState(false);
-    return (
-      <ResponsiveShell
-        forcePlatform="desktop"
-        header={MockDesktopHeader}
-        sidebar={MockSidebar}
-        sidebarCollapsed={collapsed}
-        onSidebarToggle={() => setCollapsed((c) => !c)}
-      >
-        <div className="p-6">
-          <p className="text-muted-foreground mb-4 text-sm">
-            Sidebar is <strong>{collapsed ? 'collapsed' : 'expanded'}</strong>. Use the toggle
-            button on the sidebar edge or press Ctrl+B / Cmd+B.
-          </p>
-          {MockPageContent}
-        </div>
-      </ResponsiveShell>
-    );
+export const DesktopWithoutSidebar: Story = {
+  name: 'Desktop Layout — Content Only',
+  args: {
+    forcePlatform: 'desktop',
+    header: MockDesktopHeader,
+    children: MockPageContent,
   },
 };
 

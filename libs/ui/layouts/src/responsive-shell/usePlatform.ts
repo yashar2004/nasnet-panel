@@ -116,7 +116,7 @@ export function detectPlatform(width: number): Platform {
  *       return <MobileAppShell>{children}</MobileAppShell>;
  *     case 'tablet':
  *     case 'desktop':
- *       return <AppShell sidebar={<CollapsibleSidebar />}>{children}</AppShell>;
+ *       return <AppShell>{children}</AppShell>;
  *   }
  * };
  * ```

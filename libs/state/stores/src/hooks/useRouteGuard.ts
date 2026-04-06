@@ -146,7 +146,7 @@ export function requireGuest({ location }: { location: RouteLocation }): void {
 
   if (isAuthenticated && isValid) {
     // Get redirect URL from search params or default to dashboard
-    const redirectTo = (location.search as Record<string, string>)?.redirect || '/dashboard';
+    const redirectTo = (location.search as Record<string, string>)?.redirect || '/';
 
     throw redirect({
       to: redirectTo,

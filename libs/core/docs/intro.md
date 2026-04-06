@@ -36,7 +36,6 @@ libs/core/
 │
 ├── constants/      # Static application constants
 │   └── src/
-│       ├── routes.ts        # Navigation routes (ROUTES object)
 │       ├── api-endpoints.ts # API endpoints (API_ENDPOINTS object)
 │       ├── socket-events.ts # WebSocket events (EMIT/ON)
 │       └── well-known-ports.ts  # Service port database
@@ -110,7 +109,7 @@ All aliases are defined in `apps/connect/vite.config.ts`:
 ```typescript
 import type { FilterRule } from '@nasnet/core/types';
 import { validateIPv4, formatBytes } from '@nasnet/core/utils';
-import { ROUTES, API_ENDPOINTS } from '@nasnet/core/constants';
+import { API_ENDPOINTS } from '@nasnet/core/constants';
 import { useZodForm } from '@nasnet/core/forms';
 ```
 
@@ -151,9 +150,8 @@ Pure functions with **minimal external dependencies**. Organized by domain:
 
 ### constants/ — Static Constants
 
-Organized by domain (routes, API, socket events, ports):
+Organized by domain (API, socket events, ports):
 
-- `routes.ts` - ROUTES object (navigation)
 - `api-endpoints.ts` - API_ENDPOINTS object
 - `socket-events.ts` - SOCKET_EVENTS_EMIT, SOCKET_EVENTS_ON
 - `well-known-ports.ts` - Port database + lookup functions

@@ -117,8 +117,8 @@ export function createParameterizedSelector<State, Param, Result>(
  *
  * @example
  * ```tsx
- * const { theme, sidebar } = useUIStore(
- *   state => ({ theme: state.theme, sidebar: state.sidebarOpen }),
+ * const { theme } = useUIStore(
+ *   state => ({ theme: state.theme }),
  *   shallowEqual
  * );
  * ```
@@ -132,7 +132,6 @@ export const shallowEqual = shallow;
  * ```tsx
  * const selectUISnapshot = createCombinedSelector({
  *   theme: selectResolvedTheme,
- *   sidebar: selectSidebarCollapsed,
  *   commandPalette: selectCommandPaletteOpen,
  * });
  *
@@ -161,10 +160,6 @@ export function createCombinedSelector<
 export { selectResolvedTheme, selectThemeMode } from './theme.store';
 export type { ThemeState, ThemeActions, ThemeStore } from './theme.store';
 
-// Sidebar selectors
-export { selectSidebarCollapsed, selectSidebarToggle } from './sidebar.store';
-export type { SidebarState } from './sidebar.store';
-
 // UI selectors
 export {
   selectActiveTab,
@@ -192,7 +187,6 @@ export type { NotificationState, Notification, NotificationType } from './notifi
 // ===== Combined/Derived Selectors =====
 
 import type { NotificationState } from './notification.store';
-import type { SidebarState } from './sidebar.store';
 import type { ThemeState } from './theme.store';
 import type { UIState } from './ui.store';
 
@@ -210,13 +204,6 @@ export const selectUIPreferences = (state: UIState) => ({
   animationsEnabled: state.animationsEnabled,
   defaultNotificationDuration: state.defaultNotificationDuration,
 });
-
-/**
- * Select sidebar display state based on collapse preference
- * Returns 'collapsed' | 'expanded'
- */
-export const selectSidebarDisplayState = (state: SidebarState) =>
-  state.desktopCollapsed ? 'collapsed' : 'expanded';
 
 /**
  * Select whether theme is in dark mode

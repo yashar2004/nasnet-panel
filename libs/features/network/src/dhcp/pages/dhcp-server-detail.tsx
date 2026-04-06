@@ -73,7 +73,7 @@ const staticBindingSchema = z.object({
 type StaticBindingFormData = z.infer<typeof staticBindingSchema>;
 
 export function DHCPServerDetail() {
-  const { serverId } = useParams({ from: '/network/dhcp/$serverId' });
+  const { serverId } = useParams({ from: '/network/dhcp/$serverId' as any });
   const navigate = useNavigate();
   const routerIp = useConnectionStore((state) => state.currentRouterIp);
 
@@ -196,7 +196,7 @@ export function DHCPServerDetail() {
             The DHCP server you're looking for doesn't exist.
           </p>
           <Button
-            onClick={() => navigate({ to: '/network/dhcp' })}
+            onClick={() => (navigate as any)({ to: '/network/dhcp' })}
             className="focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           >
             Back to DHCP Servers
@@ -213,7 +213,7 @@ export function DHCPServerDetail() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate({ to: '/network/dhcp' })}
+          onClick={() => (navigate as any)({ to: '/network/dhcp' })}
           className="mb-component-sm focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           aria-label="Back to DHCP servers"
         >

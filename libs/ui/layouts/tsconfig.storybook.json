@@ -5,7 +5,6 @@
     "types": ["node", "vite/client"],
     "composite": false,
     "declaration": true,
-    "baseUrl": ".",
     "rootDir": "../..",
     "paths": {
       "@nasnet/ui/*": ["../*/src"],

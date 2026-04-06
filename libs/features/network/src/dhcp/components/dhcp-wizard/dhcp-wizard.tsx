@@ -169,12 +169,12 @@ function DHCPWizardComponent({ className }: DHCPWizardProps) {
   const handleComplete = useCallback(async () => {
     await stepper.next();
     // On success, navigate to DHCP server list
-    navigate({ to: '/network/dhcp' });
+    (navigate as any)({ to: '/network/dhcp' });
   }, [stepper, navigate]);
 
   // Memoized cancel handler
   const handleCancel = useCallback(() => {
-    navigate({ to: '/network/dhcp' });
+    (navigate as any)({ to: '/network/dhcp' });
   }, [navigate]);
 
   return (

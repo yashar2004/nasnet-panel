@@ -53,9 +53,8 @@
  */
 
 import * as React from 'react';
-import { ChevronLeft } from 'lucide-react';
 
-import { cn, Icon } from '@nasnet/ui/primitives';
+import { cn } from '@nasnet/ui/primitives';
 
 import { AppShell } from '../app-shell';
 import { MobileAppShell, type MobileAppShellProps } from '../mobile-app-shell';
@@ -66,16 +65,12 @@ import { useReducedMotion, useMotionClasses } from './useReducedMotion';
  * Props for ResponsiveShell component
  *
  * Note: Due to library dependency rules, ResponsiveShell cannot directly import
- * from state/stores. Sidebar state is passed via props (dependency injection).
- * The app layer wires up the Zustand store.
+ * from state/stores. Any shell-specific state is passed via props.
  */
 export interface ResponsiveShellProps {
   children: React.ReactNode;
 
-  /**
-   * Sidebar content for tablet/desktop layouts
-   * Will be wrapped in CollapsibleSidebar behavior
-   */
+  /** Sidebar content for tablet/desktop layouts */
   sidebar?: React.ReactNode;
 
   /**
@@ -116,19 +111,6 @@ export interface ResponsiveShellProps {
    * Overrides automatic detection
    */
   forcePlatform?: Platform;
-
-  /**
-   * Whether the sidebar is collapsed (desktop only)
-   * Controlled externally via Zustand store
-   * @default false
-   */
-  sidebarCollapsed?: boolean;
-
-  /**
-   * Callback when sidebar collapse state changes
-   * Connect to Zustand store: useSidebarStore.getState().toggle()
-   */
-  onSidebarToggle?: () => void;
 
   /**
    * Additional class names
@@ -185,8 +167,6 @@ export const ResponsiveShell = React.memo(
         mobileNavigationProps,
         statusBannerProps,
         forcePlatform,
-        sidebarCollapsed = false,
-        onSidebarToggle,
         className,
       },
       ref
@@ -195,22 +175,6 @@ export const ResponsiveShell = React.memo(
       const platform = forcePlatform ?? detectedPlatform;
       const prefersReducedMotion = useReducedMotion();
       const { motionClass } = useMotionClasses();
-
-      // Keyboard shortcut for sidebar toggle (Cmd+B / Ctrl+B)
-      React.useEffect(() => {
-        if (platform === 'mobile' || !onSidebarToggle) return;
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-          // Cmd+B (Mac) or Ctrl+B (Windows/Linux)
-          if ((event.metaKey || event.ctrlKey) && event.key === 'b') {
-            event.preventDefault();
-            onSidebarToggle();
-          }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-      }, [platform, onSidebarToggle]);
 
       // Render mobile layout
       if (platform === 'mobile') {
@@ -227,56 +191,6 @@ export const ResponsiveShell = React.memo(
         );
       }
 
-      // Determine sidebar collapse state based on platform rules:
-      // - Tablet: Always expanded (collapsible but starts expanded)
-      // - Desktop: Respects persisted preference
-      const effectiveCollapsed = platform === 'tablet' ? false : sidebarCollapsed;
-
-      // Create enhanced sidebar with collapse behavior
-      const enhancedSidebar =
-        sidebar ?
-          <div
-            className={cn(
-              'flex h-full flex-col',
-              !prefersReducedMotion && 'transition-all duration-200 ease-out'
-            )}
-          >
-            {sidebar}
-            {/* Collapse toggle button (tablet/desktop) */}
-            {onSidebarToggle && (
-              <button
-                type="button"
-                onClick={onSidebarToggle}
-                className={cn(
-                  'absolute -right-3 top-1/2 z-10 -translate-y-1/2',
-                  'h-6 w-6 rounded-full',
-                  'bg-muted',
-                  'border-border border',
-                  'flex items-center justify-center',
-                  'hover:bg-accent',
-                  'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                  !prefersReducedMotion && 'transition-colors duration-150'
-                )}
-                aria-expanded={!effectiveCollapsed}
-                aria-label={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                title={`${effectiveCollapsed ? 'Expand' : 'Collapse'} sidebar (${
-                  navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'
-                }+B)`}
-              >
-                <Icon
-                  icon={ChevronLeft}
-                  className={cn(
-                    'text-muted-foreground h-4 w-4',
-                    !prefersReducedMotion && 'transition-transform duration-200',
-                    effectiveCollapsed && 'rotate-180'
-                  )}
-                  aria-hidden="true"
-                />
-              </button>
-            )}
-          </div>
-        : undefined;
-
       // Render tablet/desktop layout
       return (
         <div className="bg-background min-h-screen">
@@ -285,8 +199,8 @@ export const ResponsiveShell = React.memo(
             header={header}
             footer={footer}
             banner={banner}
-            sidebar={enhancedSidebar}
-            sidebarCollapsed={effectiveCollapsed}
+            sidebar={sidebar}
+            sidebarCollapsed={false}
             className={cn(motionClass, className)}
           >
             {children}

@@ -150,7 +150,7 @@ export function WANManagementPage() {
    */
   const handleViewDetails = useCallback(
     (wanId: string) => {
-      navigate({ to: `/dashboard/wan/${wanId}` });
+      navigate({ to: '/' });
     },
     [navigate]
   );

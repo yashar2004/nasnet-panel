@@ -1,7 +1,12 @@
 import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { MoreVertical } from 'lucide-react';
-import { useConnectionStore, useAlertNotificationStore, useUnreadCount, useNotifications } from '@nasnet/state/stores';
+import { MoreVertical, LayoutDashboard } from 'lucide-react';
+import {
+  useConnectionStore,
+  useAlertNotificationStore,
+  useUnreadCount,
+  useNotifications,
+} from '@nasnet/state/stores';
 import type { InAppNotification } from '@nasnet/state/stores';
 import { ThemeToggle, NotificationBell } from '@nasnet/ui/patterns';
 import { Button } from '@nasnet/ui/primitives';
@@ -19,10 +24,7 @@ import { Button } from '@nasnet/ui/primitives';
  * - Theme toggle and settings access
  */
 export const AppHeader = React.memo(function AppHeader() {
-  const {
-    state,
-    currentRouterIp
-  } = useConnectionStore();
+  const { state, currentRouterIp } = useConnectionStore();
   const navigate = useNavigate();
 
   // Get notification data from store
@@ -31,8 +33,8 @@ export const AppHeader = React.memo(function AppHeader() {
   const recentNotifications = allNotifications.slice(0, 5); // Show 5 most recent
 
   // Get store actions
-  const markAsRead = useAlertNotificationStore(s => s.markAsRead);
-  const markAllRead = useAlertNotificationStore(s => s.markAllRead);
+  const markAsRead = useAlertNotificationStore((s) => s.markAsRead);
+  const markAllRead = useAlertNotificationStore((s) => s.markAllRead);
 
   // Handler: Click notification -> mark as read + navigate to dashboard
   const handleNotificationClick = (notification: InAppNotification) => {
@@ -40,7 +42,7 @@ export const AppHeader = React.memo(function AppHeader() {
 
     // Navigate to dashboard (alerts will be shown there)
     navigate({
-      to: '/dashboard'
+      to: '/',
     });
   };
 
@@ -52,7 +54,7 @@ export const AppHeader = React.memo(function AppHeader() {
   // Handler: View all notifications page
   const handleViewAll = () => {
     navigate({
-      to: '/dashboard'
+      to: '/',
     });
   };
 
@@ -61,40 +63,55 @@ export const AppHeader = React.memo(function AppHeader() {
     switch (state) {
       case 'connected':
         return {
-          text: "Online",
+          text: 'Online',
           dotClass: 'bg-success',
-          textClass: 'text-success'
+          textClass: 'text-success',
         };
       case 'reconnecting':
         return {
-          text: "Reconnecting",
+          text: 'Reconnecting',
           dotClass: 'bg-warning animate-pulse',
-          textClass: 'text-warning'
+          textClass: 'text-warning',
         };
       case 'disconnected':
       default:
         return {
-          text: "Offline",
+          text: 'Offline',
           dotClass: 'bg-error',
-          textClass: 'text-error'
+          textClass: 'text-error',
         };
     }
   };
   const statusConfig = getStatusConfig();
 
   // Display router IP when connected, otherwise show app name
-  const displayName = currentRouterIp && state === 'connected' ? currentRouterIp : "NasNetConnect";
-  return <div className="brand-gradient-subtle brand-accent-line px-component-md flex h-full items-center justify-between py-3">
+  const displayName = currentRouterIp && state === 'connected' ? currentRouterIp : 'NasNetConnect';
+  return (
+    <div className="brand-gradient-subtle brand-accent-line px-component-md flex h-full items-center justify-between py-3">
       {/* Left: Brand + Status */}
       <div className="flex items-center gap-3">
-        {/* Logo */}
-        <img src="/favicon.png" alt="NasNet" className="ring-primary/30 h-8 w-8 rounded-lg shadow-sm ring-2" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="min-h-[44px] min-w-[44px] rounded-lg p-0"
+          aria-label={'Dashboard'}
+          onClick={() => navigate({ to: '/' })}
+        >
+          <img
+            src="/favicon.png"
+            alt="NasNet"
+            className="ring-primary/30 h-8 w-8 rounded-lg shadow-sm ring-2"
+          />
+        </Button>
 
         {/* App/Router Info */}
         <div>
           <p className="font-display text-foreground text-sm font-medium">{displayName}</p>
           <p className={`flex items-center gap-1.5 text-xs ${statusConfig.textClass}`}>
-            <span className={`h-2 w-2 rounded-full ${statusConfig.dotClass}`} aria-hidden="true" />
+            <span
+              className={`h-2 w-2 rounded-full ${statusConfig.dotClass}`}
+              aria-hidden="true"
+            />
             {statusConfig.text}
           </p>
         </div>
@@ -102,12 +119,39 @@ export const AppHeader = React.memo(function AppHeader() {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2"
+          onClick={() => navigate({ to: '/' })}
+        >
+          <LayoutDashboard
+            className="h-4 w-4"
+            aria-hidden="true"
+          />
+          <span className="hidden sm:inline">Dashboard</span>
+        </Button>
         <ThemeToggle />
-        <NotificationBell unreadCount={unreadCount} notifications={recentNotifications} onNotificationClick={handleNotificationClick} onMarkAllRead={handleMarkAllRead} onViewAll={handleViewAll} />
-        <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px] rounded-full" aria-label={"More options"}>
-          <MoreVertical className="text-muted-foreground h-5 w-5" aria-hidden="true" />
+        <NotificationBell
+          unreadCount={unreadCount}
+          notifications={recentNotifications}
+          onNotificationClick={handleNotificationClick}
+          onMarkAllRead={handleMarkAllRead}
+          onViewAll={handleViewAll}
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="min-h-[44px] min-w-[44px] rounded-full"
+          aria-label={'More options'}
+        >
+          <MoreVertical
+            className="text-muted-foreground h-5 w-5"
+            aria-hidden="true"
+          />
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 });
 AppHeader.displayName = 'AppHeader';

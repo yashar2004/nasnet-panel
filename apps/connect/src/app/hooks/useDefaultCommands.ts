@@ -11,22 +11,7 @@
 import { useEffect } from 'react';
 
 import { useNavigate } from '@tanstack/react-router';
-import {
-  Home,
-  LayoutDashboard,
-  Network,
-  Shield,
-  Wifi,
-  Plus,
-  Download,
-  RefreshCw,
-  Globe,
-  Router,
-  Server,
-  HardDrive,
-  Activity,
-  FileText,
-} from 'lucide-react';
+import { Home, Wifi, Plus, Download, RefreshCw, Server, HardDrive, FileText } from 'lucide-react';
 
 import {
   useCommandRegistry,
@@ -46,7 +31,7 @@ function navigateToWifi(navigate: ReturnType<typeof useNavigate>, currentRouterI
     return;
   }
 
-  navigate({ to: '/routers' });
+  navigate({ to: '/' });
 }
 
 /**
@@ -66,42 +51,7 @@ function createNavigationCommands(
       shortcut: 'g h',
       onExecute: () => navigate({ to: '/' }),
     },
-    {
-      id: 'nav-dashboard',
-      label: 'Dashboard',
-      description: 'View router dashboard',
-      icon: LayoutDashboard,
-      category: 'navigation',
-      shortcut: 'g d',
-      onExecute: () => navigate({ to: '/dashboard' }),
-    },
-    {
-      id: 'nav-routers',
-      label: 'Routers',
-      description: 'Manage connected routers',
-      icon: Router,
-      category: 'navigation',
-      shortcut: 'g r',
-      onExecute: () => navigate({ to: '/routers' }),
-    },
-    {
-      id: 'nav-network',
-      label: 'Network',
-      description: 'Network configuration',
-      icon: Network,
-      category: 'navigation',
-      shortcut: 'g n',
-      onExecute: () => navigate({ to: '/network' }),
-    },
-    {
-      id: 'nav-firewall',
-      label: 'Firewall',
-      description: 'Firewall rules and security',
-      icon: Shield,
-      category: 'navigation',
-      shortcut: 'g f',
-      onExecute: () => navigate({ to: '/network' }), // Firewall is part of network
-    },
+
     {
       id: 'nav-wifi',
       label: 'WiFi',
@@ -110,14 +60,6 @@ function createNavigationCommands(
       category: 'navigation',
       shortcut: 'g w',
       onExecute: () => navigateToWifi(navigate, currentRouterId),
-    },
-    {
-      id: 'nav-discover',
-      label: 'Discover Routers',
-      description: 'Find routers on network',
-      icon: Globe,
-      category: 'navigation',
-      onExecute: () => navigate({ to: '/discover' }),
     },
   ];
 }
@@ -198,18 +140,6 @@ function createResourceCommands(navigate: ReturnType<typeof useNavigate>): Comma
       },
     },
     {
-      id: 'resource-interfaces',
-      label: 'Interfaces',
-      description: 'Network interfaces',
-      icon: Activity,
-      category: 'resource',
-      requiresNetwork: true,
-      keywords: ['port', 'eth', 'wan', 'lan'],
-      onExecute: () => {
-        navigate({ to: '/network' });
-      },
-    },
-    {
       id: 'resource-storage',
       label: 'Storage',
       description: 'Router storage info',
@@ -257,34 +187,7 @@ function createDefaultShortcuts(
       group: 'navigation',
       onExecute: () => navigate({ to: '/' }),
     },
-    {
-      id: 'nav-go-dashboard',
-      label: 'Go to Dashboard',
-      keys: 'g d',
-      group: 'navigation',
-      onExecute: () => navigate({ to: '/dashboard' }),
-    },
-    {
-      id: 'nav-go-routers',
-      label: 'Go to Routers',
-      keys: 'g r',
-      group: 'navigation',
-      onExecute: () => navigate({ to: '/routers' }),
-    },
-    {
-      id: 'nav-go-network',
-      label: 'Go to Network',
-      keys: 'g n',
-      group: 'navigation',
-      onExecute: () => navigate({ to: '/network' }),
-    },
-    {
-      id: 'nav-go-firewall',
-      label: 'Go to Firewall',
-      keys: 'g f',
-      group: 'navigation',
-      onExecute: () => navigate({ to: '/network' }),
-    },
+
     {
       id: 'nav-go-wifi',
       label: 'Go to WiFi',

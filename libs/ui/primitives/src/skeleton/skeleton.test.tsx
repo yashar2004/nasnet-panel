@@ -21,7 +21,7 @@ import {
   SkeletonTable,
   SkeletonChart,
   SkeletonAvatar,
-} from './skeleton';
+} from './Skeleton';
 
 // Mock useReducedMotion hook
 vi.mock('../hooks', () => ({

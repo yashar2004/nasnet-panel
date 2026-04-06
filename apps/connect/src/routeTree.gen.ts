@@ -9,22 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WifiRouteImport } from './routes/wifi'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RoutersRouteImport } from './routes/routers'
-import { Route as NetworkRouteImport } from './routes/network'
-import { Route as HomeRouteImport } from './routes/home'
-import { Route as DiscoverRouteImport } from './routes/discover'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsNotificationsRouteImport } from './routes/settings/notifications'
-import { Route as DashboardTroubleshootRouteImport } from './routes/dashboard.troubleshoot'
-import { Route as DashboardRoutesRouteImport } from './routes/dashboard.routes'
-import { Route as DashboardNetworkRouteImport } from './routes/dashboard.network'
-import { Route as DashboardDnsLookupRouteImport } from './routes/dashboard.dns-lookup'
 import { Route as RouterIdRouteRouteImport } from './routes/router/$id/route'
 import { Route as RouterIdIndexRouteImport } from './routes/router/$id/index'
-import { Route as NetworkDhcpIndexRouteImport } from './routes/network/dhcp/index'
 import { Route as SettingsNotificationsWebhooksRouteImport } from './routes/settings/notifications/webhooks'
 import { Route as RouterIdVlansRouteImport } from './routes/router/$id/vlans'
 import { Route as RouterIdRoutingRouteImport } from './routes/router/$id/routing'
@@ -34,10 +23,6 @@ import { Route as RouterIdLogsRouteImport } from './routes/router/$id/logs'
 import { Route as RouterIdFirewallRouteImport } from './routes/router/$id/firewall'
 import { Route as RouterIdDnsRouteImport } from './routes/router/$id/dns'
 import { Route as RouterIdDhcpRouteImport } from './routes/router/$id/dhcp'
-import { Route as NetworkDnsDiagnosticsRouteImport } from './routes/network/dns/diagnostics'
-import { Route as NetworkDhcpNewRouteImport } from './routes/network/dhcp/new'
-import { Route as NetworkDhcpLeasesRouteImport } from './routes/network/dhcp/leases'
-import { Route as NetworkDhcpServerIdRouteImport } from './routes/network/dhcp/$serverId'
 import { Route as RouterIdWifiIndexRouteImport } from './routes/router/$id/wifi/index'
 import { Route as RouterIdVpnIndexRouteImport } from './routes/router/$id/vpn/index'
 import { Route as RouterIdServicesIndexRouteImport } from './routes/router/$id/services/index'
@@ -56,39 +41,9 @@ import { Route as RouterIdFirewallLogsRouteImport } from './routes/router/$id/fi
 import { Route as RouterIdFirewallConnectionsRouteImport } from './routes/router/$id/firewall/connections'
 import { Route as RouterIdFirewallAddressListsRouteImport } from './routes/router/$id/firewall/address-lists'
 
-const WifiRoute = WifiRouteImport.update({
-  id: '/wifi',
-  path: '/wifi',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RoutersRoute = RoutersRouteImport.update({
-  id: '/routers',
-  path: '/routers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NetworkRoute = NetworkRouteImport.update({
-  id: '/network',
-  path: '/network',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiscoverRoute = DiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -101,26 +56,6 @@ const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => SettingsRoute,
 } as any)
-const DashboardTroubleshootRoute = DashboardTroubleshootRouteImport.update({
-  id: '/troubleshoot',
-  path: '/troubleshoot',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardRoutesRoute = DashboardRoutesRouteImport.update({
-  id: '/routes',
-  path: '/routes',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardNetworkRoute = DashboardNetworkRouteImport.update({
-  id: '/network',
-  path: '/network',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardDnsLookupRoute = DashboardDnsLookupRouteImport.update({
-  id: '/dns-lookup',
-  path: '/dns-lookup',
-  getParentRoute: () => DashboardRoute,
-} as any)
 const RouterIdRouteRoute = RouterIdRouteRouteImport.update({
   id: '/router/$id',
   path: '/router/$id',
@@ -130,11 +65,6 @@ const RouterIdIndexRoute = RouterIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => RouterIdRouteRoute,
-} as any)
-const NetworkDhcpIndexRoute = NetworkDhcpIndexRouteImport.update({
-  id: '/dhcp/',
-  path: '/dhcp/',
-  getParentRoute: () => NetworkRoute,
 } as any)
 const SettingsNotificationsWebhooksRoute =
   SettingsNotificationsWebhooksRouteImport.update({
@@ -181,26 +111,6 @@ const RouterIdDhcpRoute = RouterIdDhcpRouteImport.update({
   id: '/dhcp',
   path: '/dhcp',
   getParentRoute: () => RouterIdRouteRoute,
-} as any)
-const NetworkDnsDiagnosticsRoute = NetworkDnsDiagnosticsRouteImport.update({
-  id: '/dns/diagnostics',
-  path: '/dns/diagnostics',
-  getParentRoute: () => NetworkRoute,
-} as any)
-const NetworkDhcpNewRoute = NetworkDhcpNewRouteImport.update({
-  id: '/dhcp/new',
-  path: '/dhcp/new',
-  getParentRoute: () => NetworkRoute,
-} as any)
-const NetworkDhcpLeasesRoute = NetworkDhcpLeasesRouteImport.update({
-  id: '/dhcp/leases',
-  path: '/dhcp/leases',
-  getParentRoute: () => NetworkRoute,
-} as any)
-const NetworkDhcpServerIdRoute = NetworkDhcpServerIdRouteImport.update({
-  id: '/dhcp/$serverId',
-  path: '/dhcp/$serverId',
-  getParentRoute: () => NetworkRoute,
 } as any)
 const RouterIdWifiIndexRoute = RouterIdWifiIndexRouteImport.update({
   id: '/wifi/',
@@ -299,23 +209,9 @@ const RouterIdFirewallAddressListsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
-  '/discover': typeof DiscoverRoute
-  '/home': typeof HomeRoute
-  '/network': typeof NetworkRouteWithChildren
-  '/routers': typeof RoutersRoute
   '/settings': typeof SettingsRouteWithChildren
-  '/wifi': typeof WifiRoute
   '/router/$id': typeof RouterIdRouteRouteWithChildren
-  '/dashboard/dns-lookup': typeof DashboardDnsLookupRoute
-  '/dashboard/network': typeof DashboardNetworkRoute
-  '/dashboard/routes': typeof DashboardRoutesRoute
-  '/dashboard/troubleshoot': typeof DashboardTroubleshootRoute
   '/settings/notifications': typeof SettingsNotificationsRouteWithChildren
-  '/network/dhcp/$serverId': typeof NetworkDhcpServerIdRoute
-  '/network/dhcp/leases': typeof NetworkDhcpLeasesRoute
-  '/network/dhcp/new': typeof NetworkDhcpNewRoute
-  '/network/dns/diagnostics': typeof NetworkDnsDiagnosticsRoute
   '/router/$id/dhcp': typeof RouterIdDhcpRoute
   '/router/$id/dns': typeof RouterIdDnsRoute
   '/router/$id/firewall': typeof RouterIdFirewallRouteWithChildren
@@ -325,7 +221,6 @@ export interface FileRoutesByFullPath {
   '/router/$id/routing': typeof RouterIdRoutingRoute
   '/router/$id/vlans': typeof RouterIdVlansRoute
   '/settings/notifications/webhooks': typeof SettingsNotificationsWebhooksRoute
-  '/network/dhcp/': typeof NetworkDhcpIndexRoute
   '/router/$id/': typeof RouterIdIndexRoute
   '/router/$id/firewall/address-lists': typeof RouterIdFirewallAddressListsRoute
   '/router/$id/firewall/connections': typeof RouterIdFirewallConnectionsRoute
@@ -347,22 +242,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
-  '/discover': typeof DiscoverRoute
-  '/home': typeof HomeRoute
-  '/network': typeof NetworkRouteWithChildren
-  '/routers': typeof RoutersRoute
   '/settings': typeof SettingsRouteWithChildren
-  '/wifi': typeof WifiRoute
-  '/dashboard/dns-lookup': typeof DashboardDnsLookupRoute
-  '/dashboard/network': typeof DashboardNetworkRoute
-  '/dashboard/routes': typeof DashboardRoutesRoute
-  '/dashboard/troubleshoot': typeof DashboardTroubleshootRoute
   '/settings/notifications': typeof SettingsNotificationsRouteWithChildren
-  '/network/dhcp/$serverId': typeof NetworkDhcpServerIdRoute
-  '/network/dhcp/leases': typeof NetworkDhcpLeasesRoute
-  '/network/dhcp/new': typeof NetworkDhcpNewRoute
-  '/network/dns/diagnostics': typeof NetworkDnsDiagnosticsRoute
   '/router/$id/dhcp': typeof RouterIdDhcpRoute
   '/router/$id/dns': typeof RouterIdDnsRoute
   '/router/$id/firewall': typeof RouterIdFirewallRouteWithChildren
@@ -372,7 +253,6 @@ export interface FileRoutesByTo {
   '/router/$id/routing': typeof RouterIdRoutingRoute
   '/router/$id/vlans': typeof RouterIdVlansRoute
   '/settings/notifications/webhooks': typeof SettingsNotificationsWebhooksRoute
-  '/network/dhcp': typeof NetworkDhcpIndexRoute
   '/router/$id': typeof RouterIdIndexRoute
   '/router/$id/firewall/address-lists': typeof RouterIdFirewallAddressListsRoute
   '/router/$id/firewall/connections': typeof RouterIdFirewallConnectionsRoute
@@ -395,23 +275,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
-  '/discover': typeof DiscoverRoute
-  '/home': typeof HomeRoute
-  '/network': typeof NetworkRouteWithChildren
-  '/routers': typeof RoutersRoute
   '/settings': typeof SettingsRouteWithChildren
-  '/wifi': typeof WifiRoute
   '/router/$id': typeof RouterIdRouteRouteWithChildren
-  '/dashboard/dns-lookup': typeof DashboardDnsLookupRoute
-  '/dashboard/network': typeof DashboardNetworkRoute
-  '/dashboard/routes': typeof DashboardRoutesRoute
-  '/dashboard/troubleshoot': typeof DashboardTroubleshootRoute
   '/settings/notifications': typeof SettingsNotificationsRouteWithChildren
-  '/network/dhcp/$serverId': typeof NetworkDhcpServerIdRoute
-  '/network/dhcp/leases': typeof NetworkDhcpLeasesRoute
-  '/network/dhcp/new': typeof NetworkDhcpNewRoute
-  '/network/dns/diagnostics': typeof NetworkDnsDiagnosticsRoute
   '/router/$id/dhcp': typeof RouterIdDhcpRoute
   '/router/$id/dns': typeof RouterIdDnsRoute
   '/router/$id/firewall': typeof RouterIdFirewallRouteWithChildren
@@ -421,7 +287,6 @@ export interface FileRoutesById {
   '/router/$id/routing': typeof RouterIdRoutingRoute
   '/router/$id/vlans': typeof RouterIdVlansRoute
   '/settings/notifications/webhooks': typeof SettingsNotificationsWebhooksRoute
-  '/network/dhcp/': typeof NetworkDhcpIndexRoute
   '/router/$id/': typeof RouterIdIndexRoute
   '/router/$id/firewall/address-lists': typeof RouterIdFirewallAddressListsRoute
   '/router/$id/firewall/connections': typeof RouterIdFirewallConnectionsRoute
@@ -445,23 +310,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
-    | '/discover'
-    | '/home'
-    | '/network'
-    | '/routers'
     | '/settings'
-    | '/wifi'
     | '/router/$id'
-    | '/dashboard/dns-lookup'
-    | '/dashboard/network'
-    | '/dashboard/routes'
-    | '/dashboard/troubleshoot'
     | '/settings/notifications'
-    | '/network/dhcp/$serverId'
-    | '/network/dhcp/leases'
-    | '/network/dhcp/new'
-    | '/network/dns/diagnostics'
     | '/router/$id/dhcp'
     | '/router/$id/dns'
     | '/router/$id/firewall'
@@ -471,7 +322,6 @@ export interface FileRouteTypes {
     | '/router/$id/routing'
     | '/router/$id/vlans'
     | '/settings/notifications/webhooks'
-    | '/network/dhcp/'
     | '/router/$id/'
     | '/router/$id/firewall/address-lists'
     | '/router/$id/firewall/connections'
@@ -493,22 +343,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
-    | '/discover'
-    | '/home'
-    | '/network'
-    | '/routers'
     | '/settings'
-    | '/wifi'
-    | '/dashboard/dns-lookup'
-    | '/dashboard/network'
-    | '/dashboard/routes'
-    | '/dashboard/troubleshoot'
     | '/settings/notifications'
-    | '/network/dhcp/$serverId'
-    | '/network/dhcp/leases'
-    | '/network/dhcp/new'
-    | '/network/dns/diagnostics'
     | '/router/$id/dhcp'
     | '/router/$id/dns'
     | '/router/$id/firewall'
@@ -518,7 +354,6 @@ export interface FileRouteTypes {
     | '/router/$id/routing'
     | '/router/$id/vlans'
     | '/settings/notifications/webhooks'
-    | '/network/dhcp'
     | '/router/$id'
     | '/router/$id/firewall/address-lists'
     | '/router/$id/firewall/connections'
@@ -540,23 +375,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
-    | '/discover'
-    | '/home'
-    | '/network'
-    | '/routers'
     | '/settings'
-    | '/wifi'
     | '/router/$id'
-    | '/dashboard/dns-lookup'
-    | '/dashboard/network'
-    | '/dashboard/routes'
-    | '/dashboard/troubleshoot'
     | '/settings/notifications'
-    | '/network/dhcp/$serverId'
-    | '/network/dhcp/leases'
-    | '/network/dhcp/new'
-    | '/network/dns/diagnostics'
     | '/router/$id/dhcp'
     | '/router/$id/dns'
     | '/router/$id/firewall'
@@ -566,7 +387,6 @@ export interface FileRouteTypes {
     | '/router/$id/routing'
     | '/router/$id/vlans'
     | '/settings/notifications/webhooks'
-    | '/network/dhcp/'
     | '/router/$id/'
     | '/router/$id/firewall/address-lists'
     | '/router/$id/firewall/connections'
@@ -589,65 +409,17 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
-  DiscoverRoute: typeof DiscoverRoute
-  HomeRoute: typeof HomeRoute
-  NetworkRoute: typeof NetworkRouteWithChildren
-  RoutersRoute: typeof RoutersRoute
   SettingsRoute: typeof SettingsRouteWithChildren
-  WifiRoute: typeof WifiRoute
   RouterIdRouteRoute: typeof RouterIdRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wifi': {
-      id: '/wifi'
-      path: '/wifi'
-      fullPath: '/wifi'
-      preLoaderRoute: typeof WifiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/routers': {
-      id: '/routers'
-      path: '/routers'
-      fullPath: '/routers'
-      preLoaderRoute: typeof RoutersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/network': {
-      id: '/network'
-      path: '/network'
-      fullPath: '/network'
-      preLoaderRoute: typeof NetworkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home': {
-      id: '/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/discover': {
-      id: '/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof DiscoverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -664,34 +436,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsNotificationsRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/dashboard/troubleshoot': {
-      id: '/dashboard/troubleshoot'
-      path: '/troubleshoot'
-      fullPath: '/dashboard/troubleshoot'
-      preLoaderRoute: typeof DashboardTroubleshootRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/routes': {
-      id: '/dashboard/routes'
-      path: '/routes'
-      fullPath: '/dashboard/routes'
-      preLoaderRoute: typeof DashboardRoutesRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/network': {
-      id: '/dashboard/network'
-      path: '/network'
-      fullPath: '/dashboard/network'
-      preLoaderRoute: typeof DashboardNetworkRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/dns-lookup': {
-      id: '/dashboard/dns-lookup'
-      path: '/dns-lookup'
-      fullPath: '/dashboard/dns-lookup'
-      preLoaderRoute: typeof DashboardDnsLookupRouteImport
-      parentRoute: typeof DashboardRoute
-    }
     '/router/$id': {
       id: '/router/$id'
       path: '/router/$id'
@@ -705,13 +449,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/router/$id/'
       preLoaderRoute: typeof RouterIdIndexRouteImport
       parentRoute: typeof RouterIdRouteRoute
-    }
-    '/network/dhcp/': {
-      id: '/network/dhcp/'
-      path: '/dhcp'
-      fullPath: '/network/dhcp/'
-      preLoaderRoute: typeof NetworkDhcpIndexRouteImport
-      parentRoute: typeof NetworkRoute
     }
     '/settings/notifications/webhooks': {
       id: '/settings/notifications/webhooks'
@@ -775,34 +512,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/router/$id/dhcp'
       preLoaderRoute: typeof RouterIdDhcpRouteImport
       parentRoute: typeof RouterIdRouteRoute
-    }
-    '/network/dns/diagnostics': {
-      id: '/network/dns/diagnostics'
-      path: '/dns/diagnostics'
-      fullPath: '/network/dns/diagnostics'
-      preLoaderRoute: typeof NetworkDnsDiagnosticsRouteImport
-      parentRoute: typeof NetworkRoute
-    }
-    '/network/dhcp/new': {
-      id: '/network/dhcp/new'
-      path: '/dhcp/new'
-      fullPath: '/network/dhcp/new'
-      preLoaderRoute: typeof NetworkDhcpNewRouteImport
-      parentRoute: typeof NetworkRoute
-    }
-    '/network/dhcp/leases': {
-      id: '/network/dhcp/leases'
-      path: '/dhcp/leases'
-      fullPath: '/network/dhcp/leases'
-      preLoaderRoute: typeof NetworkDhcpLeasesRouteImport
-      parentRoute: typeof NetworkRoute
-    }
-    '/network/dhcp/$serverId': {
-      id: '/network/dhcp/$serverId'
-      path: '/dhcp/$serverId'
-      fullPath: '/network/dhcp/$serverId'
-      preLoaderRoute: typeof NetworkDhcpServerIdRouteImport
-      parentRoute: typeof NetworkRoute
     }
     '/router/$id/wifi/': {
       id: '/router/$id/wifi/'
@@ -926,43 +635,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface DashboardRouteChildren {
-  DashboardDnsLookupRoute: typeof DashboardDnsLookupRoute
-  DashboardNetworkRoute: typeof DashboardNetworkRoute
-  DashboardRoutesRoute: typeof DashboardRoutesRoute
-  DashboardTroubleshootRoute: typeof DashboardTroubleshootRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardDnsLookupRoute: DashboardDnsLookupRoute,
-  DashboardNetworkRoute: DashboardNetworkRoute,
-  DashboardRoutesRoute: DashboardRoutesRoute,
-  DashboardTroubleshootRoute: DashboardTroubleshootRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
-
-interface NetworkRouteChildren {
-  NetworkDhcpServerIdRoute: typeof NetworkDhcpServerIdRoute
-  NetworkDhcpLeasesRoute: typeof NetworkDhcpLeasesRoute
-  NetworkDhcpNewRoute: typeof NetworkDhcpNewRoute
-  NetworkDnsDiagnosticsRoute: typeof NetworkDnsDiagnosticsRoute
-  NetworkDhcpIndexRoute: typeof NetworkDhcpIndexRoute
-}
-
-const NetworkRouteChildren: NetworkRouteChildren = {
-  NetworkDhcpServerIdRoute: NetworkDhcpServerIdRoute,
-  NetworkDhcpLeasesRoute: NetworkDhcpLeasesRoute,
-  NetworkDhcpNewRoute: NetworkDhcpNewRoute,
-  NetworkDnsDiagnosticsRoute: NetworkDnsDiagnosticsRoute,
-  NetworkDhcpIndexRoute: NetworkDhcpIndexRoute,
-}
-
-const NetworkRouteWithChildren =
-  NetworkRoute._addFileChildren(NetworkRouteChildren)
-
 interface SettingsNotificationsRouteChildren {
   SettingsNotificationsWebhooksRoute: typeof SettingsNotificationsWebhooksRoute
 }
@@ -1061,13 +733,7 @@ const RouterIdRouteRouteWithChildren = RouterIdRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
-  DiscoverRoute: DiscoverRoute,
-  HomeRoute: HomeRoute,
-  NetworkRoute: NetworkRouteWithChildren,
-  RoutersRoute: RoutersRoute,
   SettingsRoute: SettingsRouteWithChildren,
-  WifiRoute: WifiRoute,
   RouterIdRouteRoute: RouterIdRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport

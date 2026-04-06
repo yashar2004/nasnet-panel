@@ -7,7 +7,7 @@ import {
   SkeletonTable,
   SkeletonChart,
   SkeletonAvatar,
-} from './skeleton';
+} from './Skeleton';
 
 import type { Meta, StoryObj } from '@storybook/react';
 

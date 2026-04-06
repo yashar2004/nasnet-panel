@@ -1,5 +1,4 @@
 import React from 'react';
-import { ROUTES } from '@nasnet/core/constants';
 import { useRouterStore, useConnectionStore } from '@nasnet/state/stores';
 import { BackButton, StatusIndicator } from '@nasnet/ui/patterns';
 export interface RouterHeaderProps {
@@ -47,8 +46,8 @@ export const RouterHeader = React.memo(function RouterHeader({ routerId }: Route
       <div className="flex items-start gap-3 md:gap-4">
         {/* Back Button */}
         <BackButton
-          to={ROUTES.ROUTER_LIST}
-          ariaLabel={'Back to routers'}
+          to={'/'}
+          ariaLabel={'Back to home'}
         />
 
         {/* Router Information */}

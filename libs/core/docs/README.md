@@ -100,7 +100,6 @@ Static application constants organized by domain.
 
 **Exports:**
 
-- **`ROUTES`** - Navigation route constants (300+ routes)
 - **`API_ENDPOINTS`** - Backend API endpoint definitions
 - **`SOCKET_EVENTS_EMIT`** - Client → Server WebSocket events
 - **`SOCKET_EVENTS_ON`** - Server → Client WebSocket events
@@ -110,7 +109,6 @@ Static application constants organized by domain.
 
 ```typescript
 import {
-  ROUTES,
   API_ENDPOINTS,
   SOCKET_EVENTS_EMIT,
   WELL_KNOWN_PORTS,
@@ -118,7 +116,6 @@ import {
   searchPorts,
 } from '@nasnet/core/constants';
 
-navigate(ROUTES.ROUTER_LIST);
 socket.emit(SOCKET_EVENTS_EMIT.ROUTER_SUBSCRIBE, { routerId: 'r1' });
 ```
 
@@ -164,7 +161,7 @@ const form = useZodForm(schema);
 | -------------- | ------------------------------- | ---------------------------------------- | --------------------------- |
 | **types**      | `@nasnet/core/types`            | Type interfaces                          | Type-safe data models       |
 | **utils**      | `@nasnet/core/utils`            | Validators, formatters, helpers          | Pure utility functions      |
-| **constants**  | `@nasnet/core/constants`        | ROUTES, API_ENDPOINTS, socket events     | Static app constants        |
+| **constants**  | `@nasnet/core/constants`        | API_ENDPOINTS, socket events, ports      | Static app constants        |
 | **forms**      | `@nasnet/core/forms`            | Form hooks, validation, schema utilities | React Hook Form integration |
 | **validation** | `@nasnet/core/utils/validation` | Zod schemas, custom validators           | Form & data validation      |
 
@@ -356,7 +353,8 @@ npm install  # Already includes core dependencies
 ### Usage Example
 
 ```typescript
-import { ROUTES, validateIPv4 } from '@nasnet/core/constants';
+import { API_ENDPOINTS } from '@nasnet/core/constants';
+import { validateIPv4 } from '@nasnet/core/utils';
 import type { FilterRule } from '@nasnet/core/types';
 
 function MyComponent() {
@@ -364,7 +362,7 @@ function MyComponent() {
     if (!validateIPv4(rule.srcAddr)) {
       throw new Error('Invalid IP');
     }
-    navigate(ROUTES.FIREWALL);
+    fetch(API_ENDPOINTS.FIREWALL_RULES);
   };
 
   return <div>{t('firewall.title')}</div>;

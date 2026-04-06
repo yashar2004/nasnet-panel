@@ -6,154 +6,18 @@ title: Constants Reference
 # Constants Library Reference
 
 The **`@nasnet/core/constants`** library provides static application constants organized by domain.
-These are used throughout the frontend for type-safe navigation, API calls, and real-time
-communication.
+These are used throughout the frontend for API calls and real-time communication.
 
 **File Location:** `libs/core/constants/src/`
 
 **Main Exports:**
 
-- `ROUTES` - Navigation route constants
 - `API_ENDPOINTS` - Backend API endpoint definitions
 - `SOCKET_EVENTS_EMIT` - Client → Server WebSocket events
 - `SOCKET_EVENTS_ON` - Server → Client WebSocket events
 - `WELL_KNOWN_PORTS` - Database of well-known service ports
 
 ---
-
-## Routes (ROUTES)
-
-**File:** `libs/core/constants/src/routes.ts`
-
-The `ROUTES` object defines all application navigation routes. These are used with the TanStack
-Router for type-safe navigation.
-
-**Type:**
-
-```typescript
-export const ROUTES: {
-  [key: string]: string | ((params: string) => string);
-};
-export type Route = (typeof ROUTES)[keyof typeof ROUTES];
-```
-
-### Main Navigation
-
-| Constant    | Route        | Purpose               |
-| ----------- | ------------ | --------------------- |
-| `HOME`      | `/`          | Application home page |
-| `DASHBOARD` | `/dashboard` | Main dashboard view   |
-
-**Usage:**
-
-```typescript
-import { ROUTES } from '@nasnet/core/constants';
-import { useNavigate } from '@tanstack/react-router';
-
-const navigate = useNavigate();
-navigate({ to: ROUTES.DASHBOARD });
-```
-
-### Router Management
-
-| Constant          | Route                   | Purpose                    |
-| ----------------- | ----------------------- | -------------------------- |
-| `ROUTER_LIST`     | `/routers`              | List all connected routers |
-| `ROUTER_DETAIL`   | `/routers/:id`          | Router detail view         |
-| `ROUTER_SETTINGS` | `/routers/:id/settings` | Router settings page       |
-
-### Router Panel Routes (Epic 0.9)
-
-The router panel provides tab-based access to router functions:
-
-| Constant          | Route                  | Tab Purpose                  |
-| ----------------- | ---------------------- | ---------------------------- |
-| `ROUTER_PANEL`    | `/router/:id`          | Router panel entry point     |
-| `ROUTER_OVERVIEW` | `/router/:id`          | System overview & status     |
-| `ROUTER_WIFI`     | `/router/:id/wifi`     | Wireless configuration       |
-| `ROUTER_VPN`      | `/router/:id/vpn`      | VPN client/server management |
-| `ROUTER_FIREWALL` | `/router/:id/firewall` | Firewall rules & policies    |
-| `ROUTER_DHCP`     | `/router/:id/dhcp`     | DHCP configuration           |
-| `ROUTER_NETWORK`  | `/router/:id/network`  | Network interfaces           |
-| `ROUTER_LOGS`     | `/router/:id/logs`     | System logs                  |
-
-### Network Configuration
-
-| Constant   | Route               | Purpose                     |
-| ---------- | ------------------- | --------------------------- |
-| `WAN`      | `/network/wan`      | WAN interface configuration |
-| `LAN`      | `/network/lan`      | LAN interface configuration |
-| `FIREWALL` | `/network/firewall` | Firewall policy management  |
-| `ROUTING`  | `/network/routing`  | Routing table management    |
-| `NAT`      | `/network/nat`      | NAT rule configuration      |
-| `QOS`      | `/network/qos`      | Quality of Service settings |
-
-### Wireless Management
-
-| Constant      | Route                  | Purpose               |
-| ------------- | ---------------------- | --------------------- |
-| `WIFI`        | `/wifi`                | WiFi overview         |
-| `WIFI_DETAIL` | `/wifi/:interfaceName` | WiFi interface detail |
-
-### VPN Management (Dashboard Redesign)
-
-| Constant            | Route                             | Purpose            |
-| ------------------- | --------------------------------- | ------------------ |
-| `VPN`               | `/vpn`                            | Main VPN dashboard |
-| `VPN_SERVERS`       | `/vpn/servers`                    | VPN server list    |
-| `VPN_CLIENTS`       | `/vpn/clients`                    | VPN client list    |
-| `VPN_SERVER_DETAIL` | `/vpn/servers/:protocol/:id`      | Server detail view |
-| `VPN_CLIENT_DETAIL` | `/vpn/clients/:protocol/:id`      | Client detail view |
-| `VPN_SERVER_ADD`    | `/vpn/servers/:protocol/add`      | Add new server     |
-| `VPN_CLIENT_ADD`    | `/vpn/clients/:protocol/add`      | Add new client     |
-| `VPN_SERVER_EDIT`   | `/vpn/servers/:protocol/:id/edit` | Edit server        |
-| `VPN_CLIENT_EDIT`   | `/vpn/clients/:protocol/:id/edit` | Edit client        |
-
-### DHCP Management
-
-| Constant       | Route                   | Purpose                   |
-| -------------- | ----------------------- | ------------------------- |
-| `DHCP`         | `/network/dhcp`         | DHCP overview             |
-| `DHCP_SERVER`  | `/network/dhcp/server`  | DHCP server configuration |
-| `DHCP_CLIENTS` | `/network/dhcp/clients` | Active DHCP leases        |
-
-### Monitoring & Logs
-
-| Constant  | Route      | Purpose              |
-| --------- | ---------- | -------------------- |
-| `STATUS`  | `/status`  | System status        |
-| `MONITOR` | `/monitor` | Real-time monitoring |
-| `NETWORK` | `/network` | Network dashboard    |
-| `LOGS`    | `/logs`    | Log viewer           |
-| `METRICS` | `/metrics` | Performance metrics  |
-
-### System Settings
-
-| Constant            | Route                | Purpose              |
-| ------------------- | -------------------- | -------------------- |
-| `SETTINGS`          | `/settings`          | Settings home        |
-| `SYSTEM_SETTINGS`   | `/settings/system`   | System configuration |
-| `NETWORK_SETTINGS`  | `/settings/network`  | Network settings     |
-| `SECURITY_SETTINGS` | `/settings/security` | Security settings    |
-| `BACKUP`            | `/settings/backup`   | Backup management    |
-| `RESTORE`           | `/settings/restore`  | Restore from backup  |
-
-### User Management
-
-| Constant  | Route      | Purpose          |
-| --------- | ---------- | ---------------- |
-| `PROFILE` | `/profile` | User profile     |
-| `ACCOUNT` | `/account` | Account settings |
-| `LOGOUT`  | `/logout`  | Logout page      |
-
-### Error Pages
-
-| Constant       | Route  | Purpose                     |
-| -------------- | ------ | --------------------------- |
-| `NOT_FOUND`    | `/404` | 404 page                    |
-| `UNAUTHORIZED` | `/401` | 401 authentication required |
-| `FORBIDDEN`    | `/403` | 403 access denied           |
-| `SERVER_ERROR` | `/500` | 500 server error            |
 
 ---
 
@@ -687,34 +551,6 @@ function PortInput() {
       onChange={(e) => setQuery(e.target.value)}
       onBlur={renderSuggestions}
     />
-  );
-}
-```
-
-### Complete Example: Navigation
-
-```typescript
-import { ROUTES } from '@nasnet/core/constants';
-import { useNavigate } from '@tanstack/react-router';
-
-function RouterPanel({ routerId }: { routerId: string }) {
-  const navigate = useNavigate();
-
-  return (
-    <div>
-      <button onClick={() => navigate({ to: ROUTES.ROUTER_LIST })}>
-        Back to List
-      </button>
-      <button onClick={() => navigate({ to: ROUTES.ROUTER_OVERVIEW })}>
-        Overview
-      </button>
-      <button onClick={() => navigate({ to: ROUTES.ROUTER_WIFI })}>
-        WiFi
-      </button>
-      <button onClick={() => navigate({ to: ROUTES.ROUTER_FIREWALL })}>
-        Firewall
-      </button>
-    </div>
   );
 }
 ```

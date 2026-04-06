@@ -171,56 +171,29 @@ describe('ResponsiveShell', () => {
     });
   });
 
-  describe('Sidebar Collapse Behavior (AC 3.3)', () => {
-    it('should respond to keyboard shortcut (Ctrl+B)', () => {
+  describe('Sidebar Rendering', () => {
+    it('should render sidebar content on desktop', () => {
       Object.defineProperty(window, 'innerWidth', { value: 1280, writable: true });
-      const mockToggle = vi.fn();
 
       render(
         <PlatformProvider>
-          <ResponsiveShell
-            sidebar={<div>Sidebar</div>}
-            onSidebarToggle={mockToggle}
-          >
+          <ResponsiveShell sidebar={<div data-testid="sidebar">Sidebar</div>}>
             <div>Content</div>
           </ResponsiveShell>
         </PlatformProvider>
       );
 
-      // Simulate Ctrl+B keypress
-      fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
-      expect(mockToggle).toHaveBeenCalled();
+      expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+      expect(screen.getByTestId('app-shell')).toBeInTheDocument();
     });
 
-    it('should respond to keyboard shortcut (Cmd+B on Mac)', () => {
-      Object.defineProperty(window, 'innerWidth', { value: 1280, writable: true });
-      const mockToggle = vi.fn();
-
-      render(
-        <PlatformProvider>
-          <ResponsiveShell
-            sidebar={<div>Sidebar</div>}
-            onSidebarToggle={mockToggle}
-          >
-            <div>Content</div>
-          </ResponsiveShell>
-        </PlatformProvider>
-      );
-
-      // Simulate Cmd+B keypress (Mac)
-      fireEvent.keyDown(window, { key: 'b', metaKey: true });
-      expect(mockToggle).toHaveBeenCalled();
-    });
-
-    it('should not toggle sidebar on mobile (keyboard shortcut ignored)', () => {
+    it('should ignore desktop sidebar on mobile layout', () => {
       Object.defineProperty(window, 'innerWidth', { value: 375, writable: true });
-      const mockToggle = vi.fn();
 
       render(
         <PlatformProvider>
           <ResponsiveShell
-            sidebar={<div>Sidebar</div>}
-            onSidebarToggle={mockToggle}
+            sidebar={<div data-testid="sidebar">Sidebar</div>}
             mobileNavigationProps={{ activeId: 'home' }}
           >
             <div>Content</div>
@@ -228,25 +201,8 @@ describe('ResponsiveShell', () => {
         </PlatformProvider>
       );
 
-      // Simulate Ctrl+B keypress - should not toggle on mobile
-      fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
-      expect(mockToggle).not.toHaveBeenCalled();
-    });
-
-    it('should not call toggle if onSidebarToggle is not provided', () => {
-      Object.defineProperty(window, 'innerWidth', { value: 1280, writable: true });
-
-      render(
-        <PlatformProvider>
-          <ResponsiveShell sidebar={<div>Sidebar</div>}>
-            <div>Content</div>
-          </ResponsiveShell>
-        </PlatformProvider>
-      );
-
-      // This should not throw
-      fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
-      expect(screen.getByTestId('app-shell')).toBeInTheDocument();
+      expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
+      expect(screen.getByTestId('mobile-app-shell')).toBeInTheDocument();
     });
   });
 

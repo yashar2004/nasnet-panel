@@ -45,14 +45,14 @@ export function DHCPServerList() {
   // Handle server actions
   const handleView = useCallback(
     (serverId: string) => {
-      navigate({ to: '/network/dhcp/$serverId', params: { serverId } });
+      (navigate as any)({ to: '/network/dhcp/$serverId', params: { serverId } });
     },
     [navigate]
   );
 
   const handleEdit = useCallback(
     (serverId: string) => {
-      navigate({ to: '/network/dhcp/$serverId', params: { serverId } });
+      (navigate as any)({ to: '/network/dhcp/$serverId', params: { serverId } });
     },
     [navigate]
   );
@@ -94,7 +94,7 @@ export function DHCPServerList() {
   );
 
   const handleCreateNew = useCallback(() => {
-    navigate({ to: '/network/dhcp/new' });
+    (navigate as any)({ to: '/network/dhcp/new' });
   }, [navigate]);
 
   // Desktop table columns

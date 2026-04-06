@@ -97,13 +97,13 @@ export interface UseAlertNotificationsOptions {
  * Map event types to app routes for contextual navigation
  */
 const eventTypeToRoute: Record<string, string> = {
-  'router.offline': '/dashboard',
-  'router.online': '/dashboard',
+  'router.offline': '/',
+  'router.online': '/',
   'vpn.disconnected': '/vpn',
   'vpn.connected': '/vpn',
-  'interface.down': '/network/interfaces',
-  'interface.up': '/network/interfaces',
-  'dhcp.pool_exhausted': '/network/dhcp',
+  'interface.down': '/',
+  'interface.up': '/',
+  'dhcp.pool_exhausted': '/',
   'firewall.attack_detected': '/firewall',
   'system.high_cpu': '/system/resources',
   'system.high_memory': '/system/resources',

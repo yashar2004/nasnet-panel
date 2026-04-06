@@ -3,7 +3,6 @@ import React, { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 
 import { storeCredentials, clearCredentials } from '@nasnet/api-client/core';
-import { ROUTES } from '@nasnet/core/constants';
 import type { RouterCredentials } from '@nasnet/core/types';
 import {
   ConfigurationImportWizard,
@@ -98,7 +97,7 @@ export const RouterPanel = React.memo(function RouterPanel({
       // If router doesn't exist, navigate back to router list
       if (!routerData) {
         console.warn(`Router ${id} not found, redirecting to router list`);
-        navigate({ to: ROUTES.ROUTER_LIST });
+        navigate({ to: '/' });
         return;
       }
 
@@ -158,7 +157,7 @@ export const RouterPanel = React.memo(function RouterPanel({
   const handleCredentialCancel = () => {
     setShowCredentialDialog(false);
     // Navigate back to router list since we can't proceed without credentials
-    navigate({ to: ROUTES.ROUTER_LIST });
+    navigate({ to: '/' });
   };
 
   // Keyboard shortcut: Escape key returns to router list
@@ -170,7 +169,7 @@ export const RouterPanel = React.memo(function RouterPanel({
       const hasOpenAlertDialog = document.querySelector('[role="alertdialog"]');
 
       if (e.key === 'Escape' && !hasOpenModal && !hasOpenAlertDialog) {
-        navigate({ to: ROUTES.ROUTER_LIST });
+        navigate({ to: '/' });
       }
     };
 

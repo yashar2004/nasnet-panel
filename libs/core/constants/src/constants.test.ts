@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ROUTES,
   API_ENDPOINTS,
   SOCKET_EVENTS,
   SOCKET_EVENTS_EMIT,
@@ -13,81 +12,7 @@ import {
   getPortsByCategory,
   searchPorts,
   getSuggestionsByCategory,
-  type Route,
 } from './index';
-
-describe('ROUTES constant', () => {
-  describe('main navigation routes', () => {
-    it('should define HOME route', () => {
-      expect(ROUTES.HOME).toBe('/');
-    });
-
-    it('should define DASHBOARD route', () => {
-      expect(ROUTES.DASHBOARD).toBe('/dashboard');
-    });
-
-    it('should define all primary navigation routes', () => {
-      expect(ROUTES.HOME).toBeDefined();
-      expect(ROUTES.DASHBOARD).toBeDefined();
-      expect(ROUTES.ROUTER_LIST).toBeDefined();
-    });
-  });
-
-  describe('router management routes', () => {
-    it('should define ROUTER_LIST route', () => {
-      expect(ROUTES.ROUTER_LIST).toBe('/routers');
-    });
-
-    it('should define ROUTER_DETAIL route', () => {
-      expect(ROUTES.ROUTER_DETAIL).toBe('/routers/:id');
-    });
-
-    it('should have router panel routes', () => {
-      expect(ROUTES.ROUTER_PANEL).toBeDefined();
-      expect(ROUTES.ROUTER_WIFI).toBeDefined();
-      expect(ROUTES.ROUTER_VPN).toBeDefined();
-    });
-  });
-
-  describe('network configuration routes', () => {
-    it('should define WAN, LAN, FIREWALL routes', () => {
-      expect(ROUTES.WAN).toBe('/network/wan');
-      expect(ROUTES.LAN).toBe('/network/lan');
-      expect(ROUTES.FIREWALL).toBe('/network/firewall');
-    });
-
-    it('should have routing and QoS routes', () => {
-      expect(ROUTES.ROUTING).toBeDefined();
-      expect(ROUTES.QOS).toBeDefined();
-    });
-  });
-
-  describe('error page routes', () => {
-    it('should define NOT_FOUND route', () => {
-      expect(ROUTES.NOT_FOUND).toBe('/404');
-    });
-
-    it('should define UNAUTHORIZED route', () => {
-      expect(ROUTES.UNAUTHORIZED).toBe('/401');
-    });
-
-    it('should define FORBIDDEN route', () => {
-      expect(ROUTES.FORBIDDEN).toBe('/403');
-    });
-
-    it('should define SERVER_ERROR route', () => {
-      expect(ROUTES.SERVER_ERROR).toBe('/500');
-    });
-  });
-
-  describe('Route type', () => {
-    it('should be a union type of all route values', () => {
-      // Type is validated at compile time, this is a runtime smoke test
-      const home: Route = ROUTES.HOME;
-      expect(home).toBe('/');
-    });
-  });
-});
 
 describe('API_ENDPOINTS constant', () => {
   describe('router endpoints', () => {

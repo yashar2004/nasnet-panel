@@ -18,9 +18,6 @@
 // Theme management with system preference detection
 export * from './ui/theme.store';
 
-// Sidebar collapse state
-export * from './ui/sidebar.store';
-
 // Global UI preferences (command palette, compact mode, etc.)
 export * from './ui/ui.store';
 

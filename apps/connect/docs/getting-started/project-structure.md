@@ -96,7 +96,6 @@ apps/connect/
 │   │   ├── dashboard.network.tsx       # "/dashboard/network"
 │   │   ├── dashboard.routes.tsx        # "/dashboard/routes"
 │   │   ├── dashboard.troubleshoot.tsx  # "/dashboard/troubleshoot"
-│   │   ├── discover.tsx      # "/discover" — Router discovery
 │   │   ├── network.tsx       # "/network" — Network layout
 │   │   ├── routers.tsx       # "/routers" — Router list
 │   │   ├── settings.tsx      # "/settings" — Settings layout

@@ -4,9 +4,6 @@
  * UI State Store
  * Manages global UI preferences and transient UI state
  *
- * Note: Sidebar state is managed separately in sidebar.store.ts
- * This store handles additional UI preferences and state
- *
  * @see NAS-4.5: Implement UI State with Zustand
  */
 

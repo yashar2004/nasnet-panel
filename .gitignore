@@ -4,6 +4,15 @@
 dist
 tmp
 out-tsc
+*.tsbuildinfo
+
+# generated TypeScript declaration artifacts inside source trees
+apps/**/src/**/*.d.ts
+apps/**/src/**/*.d.ts.map
+libs/**/src/**/*.d.ts
+libs/**/src/**/*.d.ts.map
+libs/**/.storybook/**/*.d.ts
+libs/**/.storybook/**/*.d.ts.map
 
 # custom golangci-lint binary (built via `golangci-lint custom`)
 .bin/
