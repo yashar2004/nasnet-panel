@@ -13,6 +13,8 @@ libs/**/src/**/*.d.ts
 libs/**/src/**/*.d.ts.map
 libs/**/.storybook/**/*.d.ts
 libs/**/.storybook/**/*.d.ts.map
+libs/api-client/generated/**/*.d.ts
+libs/api-client/generated/**/*.d.ts.map
 
 # custom golangci-lint binary (built via `golangci-lint custom`)
 .bin/
