@@ -1,21 +1,9 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import { remarkKroki } from 'remark-kroki';
 
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
 const baseUrl = isGitHubPages ? '/nasnet-panel/' : '/';
-
-const sharedRemarkPlugins = [
-  [
-    remarkKroki,
-    {
-      server: 'https://kroki.io',
-      alias: ['plantuml', 'd2', 'excalidraw'],
-      target: 'mdx3',
-    },
-  ],
-];
 
 const config: Config = {
   title: 'NasNet Docs',
@@ -87,7 +75,6 @@ const config: Config = {
         path: '../connect/docs',
         routeBasePath: 'docs/frontend',
         sidebarPath: './sidebars/frontend.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -98,7 +85,6 @@ const config: Config = {
         path: '../backend/docs',
         routeBasePath: 'docs/backend',
         sidebarPath: './sidebars/backend.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -109,7 +95,6 @@ const config: Config = {
         path: '../connect-e2e/docs',
         routeBasePath: 'docs/testing',
         sidebarPath: './sidebars/testing.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -120,7 +105,6 @@ const config: Config = {
         path: '../../libs/ui/docs',
         routeBasePath: 'docs/ui',
         sidebarPath: './sidebars/ui.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -131,7 +115,6 @@ const config: Config = {
         path: '../../libs/features/docs',
         routeBasePath: 'docs/features',
         sidebarPath: './sidebars/features.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -142,7 +125,6 @@ const config: Config = {
         path: '../../libs/api-client/docs',
         routeBasePath: 'docs/api-client',
         sidebarPath: './sidebars/api-client.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -153,7 +135,6 @@ const config: Config = {
         path: '../../libs/state/docs',
         routeBasePath: 'docs/state',
         sidebarPath: './sidebars/state.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],
@@ -164,7 +145,6 @@ const config: Config = {
         path: '../../libs/core/docs',
         routeBasePath: 'docs/core',
         sidebarPath: './sidebars/core.ts',
-        remarkPlugins: sharedRemarkPlugins,
         editUrl: 'https://github.com/nasnet-community/nasnet-panel/tree/main/',
       },
     ],

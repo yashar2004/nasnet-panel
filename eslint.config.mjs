@@ -8,7 +8,6 @@ import nxPlugin from '@nx/eslint-plugin';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
-import i18nextPlugin from 'eslint-plugin-i18next';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -52,7 +51,6 @@ export default [
       'react-hooks': reactHooksPlugin,
       'jsx-a11y': jsxA11yPlugin,
       import: importPlugin,
-      i18next: i18nextPlugin,
     },
     settings: {
       react: {
