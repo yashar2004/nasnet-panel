@@ -135,12 +135,6 @@
 - [x] Focus indicators
 - [x] Tooltips for disabled actions
 
-### ✅ i18n Integration
-
-- [x] All strings use `t('firewall:servicePorts.*')`
-- [x] No hardcoded text
-- [x] Fallback values for missing translations
-
 ### ✅ Platform Presenters
 
 - [x] Desktop: Table layout, dense data
@@ -186,11 +180,6 @@ dependency is resolved, tests will pass.
 
 - Uses `ServicePortDefinition` from `@nasnet/core/types` (Task 3 ✅)
 - Uses `ServicePortProtocol`, `ServicePortCategory` enums
-
-### i18n Integration
-
-- Uses translations from `apps/connect/public/locales/en/firewall.json` (Task 11 ✅)
-- Namespace: `firewall:servicePorts`
 
 ### Future Integration (Task 6)
 
@@ -402,7 +391,6 @@ const filteredAndSortedServices = useMemo(() => {
 - TypeScript: ✅ Compiles without errors
 - Tests: ✅ 12 test cases (syntax valid, will run after circular dep fix)
 - Accessibility: ✅ WCAG AAA compliant (axe-core)
-- i18n: ✅ All strings translated
 - Platform Presenters: ✅ Desktop + Mobile
 
 **Blockers:**
@@ -430,7 +418,6 @@ have been implemented:
 - ✅ 12 comprehensive tests
 - ✅ 7 Storybook stories
 - ✅ WCAG AAA accessibility
-- ✅ Full i18n integration
 
 **Component is production-ready pending:**
 

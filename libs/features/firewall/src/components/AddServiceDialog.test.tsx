@@ -28,38 +28,6 @@ vi.mock('../hooks', () => ({
   useCustomServices: vi.fn(),
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'servicePorts.addService': 'Add Service',
-        'servicePorts.editService': 'Edit Service',
-        'servicePorts.fields.name': 'Service Name',
-        'servicePorts.fields.protocol': 'Protocol',
-        'servicePorts.fields.port': 'Port',
-        'servicePorts.fields.description': 'Description',
-        'servicePorts.protocols.tcp': 'TCP',
-        'servicePorts.protocols.udp': 'UDP',
-        'servicePorts.protocols.both': 'TCP & UDP',
-        'servicePorts.placeholders.serviceName': 'e.g., my-app',
-        'servicePorts.placeholders.port': 'e.g., 8080',
-        'servicePorts.placeholders.description': 'Optional description',
-        'servicePorts.validation.nameInvalid':
-          'Name must be alphanumeric with optional hyphens/underscores',
-        'servicePorts.validation.portInvalid': 'Invalid port number (1-65535)',
-        'servicePorts.validation.descriptionTooLong':
-          'Description must be less than 500 characters',
-        'servicePorts.validation.nameExists': 'Service name already exists',
-        'servicePorts.emptyStates.noServicesDescription':
-          'Add custom services to use in firewall rules',
-        'servicePorts.confirmations.deleteServiceDescription':
-          'This action cannot be undone. The service will be removed from your custom list.',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
-
 // ============================================================================
 // Test Setup
 // ============================================================================

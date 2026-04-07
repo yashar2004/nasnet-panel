@@ -45,7 +45,6 @@
 | **date-fns** | 3+ | Date/Time | ~5KB | Dec 25, 2025 |
 | **Lucide React** | Latest | Icons | ~2KB + icons | Dec 25, 2025 |
 | **Sonner** | Latest | Toasts | ~3KB | Dec 25, 2025 |
-| **react-i18next** | 14+ | i18n | ~8KB | Jan 3, 2026 |
 
 **Total Base Bundle:** ~270-300KB (with code-splitting)  
 **Budget:** 3MB gzipped → **Actual: ~1.5-2.5MB** → **50% headroom** ✅

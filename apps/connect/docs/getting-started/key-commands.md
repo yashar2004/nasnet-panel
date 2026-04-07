@@ -281,28 +281,6 @@ npm run docker:check-size
 
 ---
 
-## Internationalization (i18n)
-
-```bash
-# Extract translatable strings from source files
-npm run i18n:extract
-
-# Extract and fail if new strings are found (used in CI)
-npm run i18n:check
-
-# Extract + copy locale JSON files to public/locales/ (full sync)
-npm run i18n:sync
-```
-
-Extracted strings come from:
-
-- `apps/connect/src/**/*.{ts,tsx}`
-- `libs/ui/patterns/src/**/*.{ts,tsx}`
-
-Output goes to `libs/core/i18n/src/locales/{en,fa}/`.
-
----
-
 ## Nx Workspace Commands
 
 ```bash

@@ -111,38 +111,6 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 
 Pure utility functions are the simplest case — no DOM, no React, just input → output.
 
-```typescript
-// libs/core/i18n/src/i18n.test.ts
-import { describe, it, expect } from 'vitest';
-import { isRTLLanguage, getLanguageDirection } from './i18n';
-
-describe('isRTLLanguage', () => {
-  it('should return true for Persian', () => {
-    expect(isRTLLanguage('fa')).toBe(true);
-  });
-
-  it('should return false for English', () => {
-    expect(isRTLLanguage('en')).toBe(false);
-  });
-
-  it('should return false for unknown languages', () => {
-    expect(isRTLLanguage('unknown')).toBe(false);
-  });
-});
-
-describe('getLanguageDirection', () => {
-  it('should return rtl for Persian', () => {
-    expect(getLanguageDirection('fa')).toBe('rtl');
-  });
-
-  it('should return ltr for English', () => {
-    expect(getLanguageDirection('en')).toBe('ltr');
-  });
-});
-```
-
----
-
 ## Testing Custom Hooks
 
 Use `renderHook` from React Testing Library to test hooks in isolation. Wrap with providers when the
@@ -300,7 +268,7 @@ vi.mock('@nasnet/api-client/queries', async () => {
 ```typescript
 const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 // ... test code that should call console.warn
-expect(spy).toHaveBeenCalledWith(expect.stringContaining('Missing translation'));
+expect(spy).toHaveBeenCalledWith(expect.stringContaining('expected warning'));
 spy.mockRestore();
 ```
 

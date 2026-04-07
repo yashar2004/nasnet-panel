@@ -93,8 +93,7 @@ libs/features/diagnostics/src/
 │   └── isp-detection.ts              # ISP name/contact detection from router
 ├── graphql/
 │   └── traceroute.graphql.ts         # Traceroute mutation + subscription documents
-└── i18n/
-    └── troubleshoot-messages.ts      # TROUBLESHOOT_MESSAGES constants
+└── troubleshoot-messages.ts          # TROUBLESHOOT_MESSAGES constants
 ```
 
 ---
@@ -140,7 +139,7 @@ export type {
 export { FIX_REGISTRY, getFix } from './constants/fix-registry';
 export { detectWanInterface, detectGateway } from './utils/network-detection';
 export { detectISP, getWanIpForISPDetection } from './utils/isp-detection';
-export { TROUBLESHOOT_MESSAGES } from './i18n/troubleshoot-messages';
+export { TROUBLESHOOT_MESSAGES } from './troubleshoot-messages';
 ```
 
 ---
@@ -725,8 +724,9 @@ description, and optionally the result message. Uses semantic color tokens: `str
 - Session duration
 
 **StepAnnouncer:** Hidden `aria-live="polite"` region that announces state transitions to screen
-readers. When a step transitions to `running`, announces "Running [step name] diagnostic". When `passed`,
-announces "Passed: [result message]". When `failed`, announces "Failed: [result message]. Fix available."
+readers. When a step transitions to `running`, announces "Running [step name] diagnostic". When
+`passed`, announces "Passed: [result message]". When `failed`, announces "Failed: [result message].
+Fix available."
 
 ### Platform Presenters
 

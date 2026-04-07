@@ -7,7 +7,6 @@
  * - Context-aware action buttons
  * - Dialog interactions (Add Service, Create Group)
  * - Empty states
- * - i18n integration
  * - Responsive layout
  *
  * @see NAS-7.8: Implement Service Ports Management - Task 8
@@ -22,26 +21,6 @@ import { useCustomServices } from '../hooks';
 // ============================================================================
 // Mocks
 // ============================================================================
-
-// Mock i18next
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'servicePorts.title': 'Service Ports',
-        'servicePorts.description': 'Define service names for easier rule creation',
-        'servicePorts.tabs.services': 'Services',
-        'servicePorts.tabs.groups': 'Groups',
-        'servicePorts.addService': 'Add Service',
-        'servicePorts.createGroup': 'Create Group',
-        'servicePorts.emptyStates.noGroups': 'No service groups defined',
-        'servicePorts.emptyStates.noGroupsDescription':
-          'Create groups to quickly select multiple services',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
 
 // Mock Lucide icons
 vi.mock('lucide-react', () => ({
@@ -427,38 +406,6 @@ describe('ServicePortsPage', () => {
         const dialog = screen.getByTestId('add-service-dialog');
         expect(dialog).toHaveAttribute('data-open', 'true');
       });
-    });
-  });
-
-  // ============================================================================
-  // i18n Tests
-  // ============================================================================
-
-  describe('i18n Integration', () => {
-    it('uses i18n for all text content', () => {
-      renderServicePortsPage();
-
-      // Header
-      expect(screen.getByText('Service Ports')).toBeInTheDocument();
-      expect(screen.getByText('Define service names for easier rule creation')).toBeInTheDocument();
-
-      // Tabs
-      expect(screen.getByText('Services')).toBeInTheDocument();
-      expect(screen.getByText('Groups')).toBeInTheDocument();
-
-      // Button
-      expect(screen.getByText('Add Service')).toBeInTheDocument();
-    });
-
-    it('has no hardcoded strings', () => {
-      const { container } = renderServicePortsPage();
-      const text = container.textContent || '';
-
-      // All text should come from i18n keys
-      expect(text).toContain('Service Ports');
-      expect(text).toContain('Define service names for easier rule creation');
-      expect(text).not.toContain('TODO');
-      expect(text).not.toMatch(/\b(Untranslated|Missing|undefined)\b/);
     });
   });
 

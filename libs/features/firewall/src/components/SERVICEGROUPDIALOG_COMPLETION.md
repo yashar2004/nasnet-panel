@@ -186,7 +186,6 @@ Based on `libs/ui/patterns/src/network-inputs/interface-selector/`:
 - ✅ Three-layer component architecture (Domain layer)
 - ✅ Headless + Platform Presenters pattern
 - ✅ Form validation with Zod schemas
-- ✅ i18n translations
 - ✅ Accessibility (WCAG AAA)
 - ✅ State management with React Hook Form
 
@@ -216,19 +215,6 @@ Based on `libs/ui/patterns/src/network-inputs/interface-selector/`:
 - `@nasnet/ui/primitives` - UI components
 - `../hooks/useCustomServices` - Data management hook
 - `react-hook-form` + `@hookform/resolvers/zod` - Form management
-- `react-i18next` - Translations
-
-### i18n Keys Used
-
-All translations from `apps/connect/public/locales/en/firewall.json`:
-
-- `servicePorts.fields.*`
-- `servicePorts.protocols.*`
-- `servicePorts.placeholders.*`
-- `servicePorts.validation.*`
-- `servicePorts.buttons.*`
-- `servicePorts.editGroup`
-- `servicePorts.createGroup`
 
 ## Verification Checklist
 
@@ -304,7 +290,6 @@ The ServiceGroupDialog component is fully implemented with:
 - 617 lines of comprehensive tests
 - 516 lines of Storybook stories
 - Complete integration with useCustomServices hook
-- Full i18n support
 - WCAG AAA accessibility
 - Multi-select with protocol filtering
 - Real-time preview

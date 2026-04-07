@@ -315,25 +315,6 @@ Use this checklist to ensure your feature implementation follows NasNetConnect d
 
 ---
 
-## 🌍 Internationalization
-
-### Text Content
-- [ ] All user-facing text uses i18n keys
-- [ ] No hardcoded strings
-- [ ] Text is translatable (no concatenation)
-- [ ] Date/time formats use locale
-- [ ] Number formats use locale
-
-### RTL Support
-- [ ] Layout works in RTL mode
-- [ ] Icons don't need flipping
-- [ ] Text alignment correct
-- [ ] Margin/padding logical properties
-
----
-
-## 🔍 Code Review Checklist
-
 ### Before Submitting PR
 
 **General:**
@@ -396,7 +377,7 @@ Use this checklist to ensure your feature implementation follows NasNetConnect d
 <MyComponent>  // Should have Mobile/Tablet/Desktop variants
 
 // Hardcoded text
-<Button>Connect</Button>  // Should use i18n
+<Button>Connect</Button>  // Should use a translatable key
 ```
 
 ### ✅ Do This Instead
@@ -414,7 +395,7 @@ Use this checklist to ensure your feature implementation follows NasNetConnect d
 // Using platform presenters
 <ResourceCard resource={vpn} />  // Auto-detects platform
 
-// Using i18n
+// Using translatable text
 <Button>{t('actions.connect')}</Button>
 ```
 
@@ -576,7 +557,7 @@ import { Chart } from '@/ui/patterns/data/chart';
 
 ### 4. Hardcoding Text
 **Problem:** Not translatable  
-**Solution:** Use i18n keys for all user-facing text
+**Solution:** Use translatable keys for all user-facing text
 
 ### 5. Skipping Accessibility Testing
 **Problem:** WCAG compliance failures  

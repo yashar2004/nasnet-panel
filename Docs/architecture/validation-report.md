@@ -116,7 +116,7 @@ All technologies validated against **2026 sources** and **production usage at sc
 | Jan 3, 2026 | Component Library | 5 | Three-layer architecture, 56 patterns | ✅ Complete |
 | Jan 3, 2026 | Database | 5 | Hybrid DB, three-tier events, ULID | ✅ Complete |
 | Jan 3, 2026 | Deployment & CI/CD | 5 | Pull-based updates, 5-phase power-safe | ✅ Complete |
-| Jan 3, 2026 | Localization | 5 | i18n strategy, RTL support | ✅ Complete |
+| Jan 3, 2026 | Localization | 5 | RTL support | ✅ Complete |
 | Jan 5, 2026 | Testing Strategy | 5 | Testing Trophy, CHR Docker | ✅ Complete |
 | Jan 7, 2026 | DX Tooling | 5 | DevContainer-first, code generation | ✅ Complete |
 | Jan 8, 2026 | Roadmap Implementation | 4 | Timeline, MVP scope lock | ✅ Complete |
@@ -139,7 +139,7 @@ All technologies validated against **2026 sources** and **production usage at sc
 | Testing Strategy | Vitest, Playwright, CHR Docker, MSW | Stack validated, CHR Docker confirmed for CI | Jan 10, 2026 |
 | Backend Architecture Complete | Go modules, Watermill, circuit breakers | All libraries production-proven | Jan 10, 2026 |
 | Frontend Stack | React 18, TanStack Router, Framer Motion | Modern stack validated | Jan 10, 2026 |
-| Localization | react-i18next, RTL, font strategy | Implementation patterns validated | Jan 10, 2026 |
+| Localization | RTL, font strategy | Implementation patterns validated | Jan 10, 2026 |
 | DX Tooling | DevContainer, Nx, Plop, Hygen | Workflow validated, <2min setup achievable | Jan 10, 2026 |
 
 **Research Validation Coverage:** **100%** of technology choices validated with 2026 sources
@@ -227,7 +227,6 @@ All technologies validated against **2026 sources** and **production usage at sc
 | **Resource Exhaustion** | Medium | High | **Strong** (pre-flight, limits) | **LOW** |
 | **Test Infrastructure Delays** | Low | Medium | **Strong** (parallel workstream) | **LOW** |
 | **Scope Creep** | Medium | High | **Strong** (locked MVP scope) | **LOW** |
-| **i18n Complexity** | Low | Medium | **Moderate** (namespace splitting) | **MEDIUM** |
 | **Performance Regression** | Low | Medium | **Strong** (CI benchmarks) | **LOW** |
 | **CHR Licensing** | Low | Low | **Moderate** (verify + fallback) | **LOW** |
 

@@ -637,7 +637,6 @@ vpnForm.graphqlQuery   // GraphQL query type (all fields including readonly + co
 |---------|---------|---------|-------------|
 | Sonner | latest | Toast notifications | ~5KB |
 | date-fns | 3 | Date manipulation | ~8KB (tree-shaken) |
-| react-i18next | latest | Internationalization | ~12KB |
 
 ### Testing Stack (Dev Dependencies)
 | Library | Version | Purpose |

@@ -45,42 +45,6 @@ vi.mock('@nasnet/state/stores', () => ({
   })),
 }));
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'rateLimiting.title': 'Rate Limiting',
-        'rateLimiting.subtitle': 'Manage connection rate limits and protect against DDoS attacks',
-        'rateLimiting.tabs.rateLimits': 'Rate Limits',
-        'rateLimiting.tabs.synFlood': 'SYN Flood Protection',
-        'rateLimiting.tabs.statistics': 'Statistics',
-        'rateLimiting.buttons.addRateLimit': 'Add Rate Limit',
-        'rateLimiting.buttons.clear': 'Clear Blocked IPs',
-        'rateLimiting.statistics.refresh': 'Refresh',
-        'rateLimiting.statistics.exportCSV': 'Export CSV',
-        'rateLimiting.statistics.blockedIPsTable': 'Blocked IPs',
-        'rateLimiting.fieldHelp.whitelistInfo': 'Click whitelist to temporarily allow blocked IPs',
-        'rateLimiting.emptyStates.noRules': 'No rate limit rules',
-        'rateLimiting.emptyStates.noRulesDescription':
-          'Create your first rate limit rule to protect against connection flooding',
-        'rateLimiting.emptyStates.noBlockedIPs': 'No blocked IPs',
-        'rateLimiting.emptyStates.noBlockedIPsDescription':
-          'Blocked IPs will appear here when rate limits are triggered',
-        'rateLimiting.dialogs.addRule.title': 'Add Rate Limit Rule',
-        'rateLimiting.dialogs.addRule.description': 'Create a new connection rate limit rule',
-        'rateLimiting.dialogs.editRule.title': 'Edit Rate Limit Rule',
-        'rateLimiting.dialogs.editRule.description': 'Modify existing rate limit rule',
-        'rateLimiting.synFlood.description':
-          'SYN flood protection helps prevent SYN flood attacks by limiting the rate of SYN packets',
-        'rateLimiting.synFlood.warning':
-          'Warning: Changing SYN flood settings may affect legitimate connections',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
-
 // Mock UI patterns components
 vi.mock('@nasnet/ui/patterns', () => ({
   RateLimitRulesTable: () => <div data-testid="rate-limit-rules-table">Rules Table</div>,

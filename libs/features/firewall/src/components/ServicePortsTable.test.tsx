@@ -28,11 +28,6 @@ import type { ServicePortDefinition } from '@nasnet/core/types';
 
 // Mock hooks
 vi.mock('../hooks/useCustomServices');
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, defaultValue?: string) => defaultValue || key,
-  }),
-}));
 vi.mock('@nasnet/ui/primitives', async () => {
   const actual = await vi.importActual('@nasnet/ui/primitives');
   return {

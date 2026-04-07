@@ -218,25 +218,6 @@ const safeError = mapBackendErrors(backendError);
 // Result: Only generic message shown to user
 ```
 
-### Error Messages Use i18n Keys
-
-Errors should never be raw backend messages:
-
-```typescript
-// Good - i18n key, backend provides error code
-{
-  code: 'VLAN_CONFLICT',
-  i18nKey: 'errors.vlan_conflict',  // Maps to i18n string
-  // Message shown: "VLAN is already in use"
-}
-
-// Bad - raw backend message shown to user
-{
-  message: 'VLAN 100-110 range overlaps with existing allocation 105-115'
-  // Might reveal internal resource details
-}
-```
-
 ### suggestedFix Provides Safe Remediation
 
 ```typescript

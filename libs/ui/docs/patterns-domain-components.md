@@ -1944,11 +1944,11 @@ Source directory: `libs/ui/patterns/src/help/`
 **Import:** `import { FieldHelp } from '@nasnet/ui/patterns';`
 
 Auto-detecting wrapper that renders a `HelpPopover` on desktop or a `HelpSheet` bottom sheet on
-mobile. Looks up content from an i18n key.
+mobile. Looks up content from a field key.
 
 ```ts
 export interface FieldHelpProps {
-  field: string; // i18n key, e.g. 'vpn.wireguard.mtu'
+  field: string; // field key, e.g. 'vpn.wireguard.mtu'
   mode?: HelpMode; // override global mode
   placement?: 'top' | 'right' | 'bottom' | 'left';
   className?: string;
@@ -1991,7 +1991,7 @@ import { HelpSheet } from '@nasnet/ui/patterns';
 ```
 
 Low-level presenters used by `FieldHelp`. Use these directly if you need to supply content
-programmatically rather than via i18n key.
+programmatically.
 
 ```ts
 export interface HelpContent {
@@ -2022,9 +2022,9 @@ export interface HelpSheetProps {
 import { useFieldHelp, useHelpMode } from '@nasnet/ui/patterns';
 ```
 
-`useFieldHelp` resolves content from the i18n store for a given field key and manages open state.
-Returns `UseFieldHelpReturn`: `content`, `isOpen`, `setIsOpen`, `toggle`, `mode`, `toggleMode`,
-`ariaLabel`, `isReady`.
+`useFieldHelp` resolves content for a given field key and manages open state. Returns
+`UseFieldHelpReturn`: `content`, `isOpen`, `setIsOpen`, `toggle`, `mode`, `toggleMode`, `ariaLabel`,
+`isReady`.
 
 `useHelpMode` reads and writes the global help mode. Returns `{ mode, toggleMode, setMode }`.
 
@@ -2100,20 +2100,6 @@ Light/Dark/System theme toggle. Reads and writes to the Zustand theme store.
 
 ```ts
 export interface ThemeToggleProps {
-  className?: string;
-}
-```
-
----
-
-### LanguageSwitcher
-
-**Import:** `import { LanguageSwitcher } from '@nasnet/ui/patterns';`
-
-Dropdown for switching the UI language. Integrates with the i18n store.
-
-```ts
-export interface LanguageSwitcherProps {
   className?: string;
 }
 ```

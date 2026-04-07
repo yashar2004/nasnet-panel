@@ -82,7 +82,7 @@ libs/features/<name>/
     │   └── feature.types.ts
     ├── graphql/ (optional)   # Inline GraphQL operation definitions
     │   └── feature.graphql.ts
-    ├── i18n/ (optional)      # Message constants (no i18n framework, just typed strings)
+    ├── messages/ (optional)  # Message constants
     │   └── messages.ts
     ├── data/ (optional)      # Static option data (channel lists, country codes, etc.)
     │   └── options.ts

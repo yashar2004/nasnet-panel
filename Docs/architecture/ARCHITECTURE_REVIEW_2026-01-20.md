@@ -274,7 +274,6 @@ Your architecture introduces **8 novel patterns** that provide significant compe
 | **Resource Exhaustion** | Medium | High | **Strong** (pre-flight checks, complexity limits, configurable) | **LOW** | ✅ Accept |
 | **Test Infrastructure Delays** | Low | Medium | **Strong** (parallel workstream C, CHR Docker validated) | **LOW** | ✅ Accept |
 | **Scope Creep** | Medium | High | **Strong** (locked MVP scope, clear gate criteria) | **LOW** | ✅ Accept |
-| **i18n Complexity** | Low | Medium | **Moderate** (namespace splitting, RTL support designed) | **MEDIUM** | ⚠️ Monitor |
 | **Performance Regression** | Low | Medium | **Strong** (CI benchmarks, bundle analysis, load testing) | **LOW** | ✅ Accept |
 | **CHR Licensing** | Low | Low | **Moderate** (verify license + fallback to manual testing) | **LOW** | ✅ Accept |
 
@@ -401,7 +400,6 @@ UI state → Zustand
 3. A11yProvider wraps (global monitoring)
 4. CI testing catches (Pa11y + Playwright axe)
 
-**Internationalization:** ✅ 10 languages + RTL support (react-i18next with namespace splitting)
 
 ---
 
@@ -509,11 +507,6 @@ UI state → Zustand
 
 ### Minor Concerns (Monitored, Not Blocking)
 
-1. **i18n Namespace Complexity** (Risk: Medium)
-   - 10 languages + RTL + namespace splitting
-   - **Mitigation:** react-i18next proven, namespace splitting designed
-   - **Action:** Monitor during implementation, adjust if needed
-   - **Verdict:** ⚠️ Monitor, acceptable
 
 2. **Performance Benchmarks Pending** (Risk: Low)
    - Load testing validation needed
@@ -590,10 +583,6 @@ UI state → Zustand
    - Validate <100ms p95 API response target
    - Document bottlenecks and optimizations
 
-6. **⏳ i18n Namespace Strategy Refinement** (As needed)
-   - Start with English + 1 RTL language (Arabic)
-   - Validate namespace splitting works
-   - Expand to remaining languages once pattern proven
 
 7. **⏳ Security Scan Integration** (Gate 2-3)
    - Snyk (SCA + SAST)
@@ -703,7 +692,6 @@ UI state → Zustand
 **Pending Validation:**
 - ⏳ Load testing (planned for Workstream C)
 - ⏳ CHR license verification (immediate action)
-- ⏳ i18n namespace refinement (as needed during implementation)
 
 ### Risk Level: **LOW** ✅
 

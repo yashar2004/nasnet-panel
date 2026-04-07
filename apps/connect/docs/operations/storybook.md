@@ -155,7 +155,6 @@ This means stories automatically get:
 
 - A `MockApolloProvider` with zero retries (for predictable mock data)
 - A `QueryClientProvider` (TanStack Query, also zero retries)
-- i18n context (`I18nProvider`)
 - Platform detection (`PlatformProvider`)
 - Animation context
 - Toast notifications

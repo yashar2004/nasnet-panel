@@ -80,7 +80,6 @@ export interface ErrorInfo {
   severity: ErrorSeverity; // 'info' | 'warning' | 'error' | 'critical'
   recoverable: boolean; // Whether user action can fix it
   action?: string; // Suggested recovery step
-  i18nKey?: string; // Translation key (e.g., 'errors.auth.expired')
 }
 ```
 
@@ -164,13 +163,12 @@ getErrorMessage(undefined); // "An error occurred. Please try again."
 export function getErrorInfo(code: string | undefined, fallbackMessage?: string): ErrorInfo;
 ```
 
-Returns the full `ErrorInfo` object with message, severity, recoverability, action, and i18n key.
+Returns the full `ErrorInfo` object with message, severity, recoverability, and action.
 
 ```ts
 const info = getErrorInfo('A502');
 // { message: "Your session has expired", severity: "warning",
-//   recoverable: true, action: "Please log in again",
-//   i18nKey: "errors.auth.expired" }
+//   recoverable: true, action: "Please log in again" }
 ```
 
 #### `getErrorCategory(code)`
@@ -694,7 +692,6 @@ interface ErrorInfo {
   severity: ErrorSeverity; // 'info' | 'warning' | 'error' | 'critical'
   recoverable: boolean; // Whether user action can fix it
   action?: string; // Suggested recovery step
-  i18nKey?: string; // Translation key for i18n integration
 }
 ```
 
@@ -707,7 +704,6 @@ const info = getErrorInfo('A502');
 //   severity: "warning",
 //   recoverable: true,
 //   action: "Please log in again",
-//   i18nKey: "errors.auth.expired"
 // }
 ```
 

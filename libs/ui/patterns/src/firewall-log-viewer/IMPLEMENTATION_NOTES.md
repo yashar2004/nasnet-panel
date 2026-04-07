@@ -2,7 +2,7 @@
 
 ## Current Status
 
-**Completed by i18n-specialist:**
+**Completed:**
 
 - ✅ `FirewallLogViewer.types.ts` - Complete type definitions with semantic color mappings
 - ✅ `FirewallLogViewer.tsx` - Platform wrapper with proper integration

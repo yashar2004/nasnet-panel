@@ -18,7 +18,6 @@
 - [Routing & Navigation](#routing--navigation)
 - [Performance Optimization](#performance-optimization)
 - [Accessibility](#accessibility)
-- [Internationalization](#internationalization)
 
 ---
 
@@ -48,7 +47,6 @@ NasNetConnect frontend is a modern React 18 application built with **type-safety
 | **Forms** | React Hook Form + Zod | Minimal re-renders, schema-driven validation |
 | **Routing** | TanStack Router | Type-safe routes, code-splitting |
 | **Animation** | Framer Motion | Physics-based, gestures, platform-aware timing |
-| **i18n** | react-i18next | 10 languages, RTL support, namespace splitting |
 
 ---
 
@@ -605,53 +603,6 @@ const [updateResource] = useMutation(UPDATE_RESOURCE, {
 - ✅ Reduced motion support
 
 ---
-
-## Internationalization
-
-### Multi-Language Support
-
-**10 Languages with RTL:**
-- English (en)
-- Spanish (es)
-- French (fr)
-- German (de)
-- Russian (ru)
-- Turkish (tr)
-- Persian (fa) - RTL
-- Arabic (ar) - RTL
-- Chinese Simplified (zh-CN)
-- Japanese (ja)
-
-**Implementation:**
-
-```tsx
-// Namespace per feature
-export const useTranslation = () => {
-  return i18n.useTranslation(['common', 'vpn', 'firewall']);
-};
-
-// Usage
-const { t } = useTranslation();
-
-<h1>{t('vpn:title')}</h1>
-<p>{t('vpn:description', { count: vpns.length })}</p>
-```
-
-**RTL Support:**
-
-```tsx
-// Automatic RTL layout
-<html dir={isRTL ? 'rtl' : 'ltr'}>
-  {/* Tailwind automatically handles RTL with rtl: prefix */}
-  <Button className="ml-2 rtl:mr-2 rtl:ml-0">
-    {t('common:save')}
-  </Button>
-</html>
-```
-
----
-
-## Related Documents
 
 - [Component Architecture](./novel-pattern-designs.md#4-headless--platform-presenters-ui-pattern) - Detailed pattern explanation
 - [Design System](../design/) - Complete UX specifications

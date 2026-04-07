@@ -86,7 +86,7 @@ describe('TimeRangeInput', () => {
       />
     );
 
-    // The alert should be visible (implementation dependent on i18n)
+    // The alert should be visible
     const alerts = screen.queryAllByRole('alert');
     // Should have an alert visible when crossing midnight
     expect(alerts.length).toBeGreaterThan(0);

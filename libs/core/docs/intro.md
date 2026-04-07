@@ -385,7 +385,6 @@ components, and no rendering. Understanding what lives in core vs. what lives el
 
 - Core can be used in non-React contexts (CLI tools, code generators, test utilities)
 - Core types and utils are tree-shakeable with zero UI framework dependencies
-- Only `libs/core/forms` and `libs/core/i18n` have React dependencies (by design)
 - This separation enables sharing types with the Go backend via code generation
 
 **Boundary violations to avoid:**
@@ -404,12 +403,10 @@ components, and no rendering. Understanding what lives in core vs. what lives el
 - [types.md](./sub-libraries/types.md) - Complete type reference
 - [utils.md](./sub-libraries/utils.md) - Utility functions
 - [forms.md](./sub-libraries/forms.md) - React Hook Form
-- [i18n.md](./sub-libraries/i18n.md) - Internationalization
 
 ### Cross-Cutting Guides
 
-- [error-handling-patterns.md](./guides/error-handling-patterns.md) - Error types, backend mapping,
-  i18n messages
+- [error-handling-patterns.md](./guides/error-handling-patterns.md) - Error types, backend mapping
 - [graphql-integration-guide.md](./guides/graphql-integration-guide.md) - Type flow, codegen, Apollo
   patterns
 - [testing-patterns.md](./guides/testing-patterns.md) - Vitest setup, hook testing, mock strategies

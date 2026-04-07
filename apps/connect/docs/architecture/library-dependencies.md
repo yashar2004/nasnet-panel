@@ -61,7 +61,6 @@ flowchart LR
 
     App --> C_const[core/constants]
     App --> C_forms[core/forms]
-    App --> C_i18n[core/i18n]
     App --> C_types[core/types]
     App --> C_utils[core/utils]
 
@@ -94,7 +93,6 @@ flowchart LR
     subgraph CoreLibs["@nasnet/core/* (type:core)"]
         C_const
         C_forms
-        C_i18n
         C_types
         C_utils
     end

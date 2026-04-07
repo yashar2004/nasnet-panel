@@ -1320,7 +1320,6 @@ FieldHelp                        [patterns]
   └── usePlatform()              [layouts]
   └── useFieldHelp()             [patterns]
       └── useHelpMode()          [patterns] → reads global mode
-      └── useTranslation()       i18n → loads help.<field>.description.<mode>
   └── mobile → FieldHelpMobile   [patterns]
       └── HelpIcon               [patterns]
       └── BottomSheet            [patterns] — gesture-driven mobile sheet

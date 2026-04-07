@@ -11,12 +11,6 @@ vi.mock('@nasnet/state/stores', () => ({
   useNotificationStore: vi.fn(),
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
 import { useServiceAlertSubscription } from '@nasnet/api-client/queries';
 import { useNotificationStore } from '@nasnet/state/stores';
 

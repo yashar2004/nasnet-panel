@@ -15,7 +15,6 @@ patterns, and best practices for displaying errors to users.
 
 - [Error Type Hierarchy](#error-type-hierarchy)
 - [Backend Error to Form Error Mapping](#backend-error-to-form-error-mapping)
-- [i18n Error Messages](#i18n-error-messages)
 - [Error Flow Through Validation Pipeline](#error-flow-through-validation-pipeline)
 - [Error Display Patterns](#error-display-patterns)
 - [Code Examples](#code-examples)
@@ -377,131 +376,6 @@ const message = combineFieldErrors(errors);
 
 ---
 
-## i18n Error Messages
-
-Error messages support internationalization through the `error-messages.ts` module. Validation error
-codes map to translation keys for multi-language support.
-
-### createZodErrorMap()
-
-Creates a custom Zod error map that integrates with i18n. Maps Zod issue codes to translation keys.
-
-```typescript
-function createZodErrorMap(t: TranslateFunction = defaultTranslate): ZodErrorMap;
-```
-
-**The Translation Function:**
-
-```typescript
-type TranslateFunction = (key: string, params?: Record<string, string | number>) => string;
-```
-
-**Usage with a custom translation function:**
-
-```typescript
-import { createZodErrorMap } from '@nasnet/core/forms';
-
-function MyForm() {
-  const t = (key: string) => key;
-
-  // Option 1: Use locally
-  const schema = z
-    .string()
-    .email()
-    .parse(input, { errorMap: createZodErrorMap(t) });
-
-  // Option 2: Set globally
-  setGlobalErrorMap(t);
-  const schema = z.string().email();
-  schema.parse(input); // Uses the global error map
-}
-```
-
-### DEFAULT_ERROR_MESSAGES
-
-Pre-defined English error messages. Maps validation codes to human-readable strings.
-
-```typescript
-const DEFAULT_ERROR_MESSAGES: Record<string, string> = {
-  'validation.required': 'This field is required',
-  'validation.string.min': 'Must be at least {{min}} characters',
-  'validation.string.max': 'Must be at most {{max}} characters',
-  'validation.number.min': 'Must be at least {{min}}',
-  'validation.number.max': 'Must be at most {{max}}',
-  'validation.email.invalid': 'Please enter a valid email address',
-  'validation.url.invalid': 'Please enter a valid URL',
-  // ... 18 total default messages
-};
-```
-
-**Template Variables:**
-
-Messages support template interpolation using `{{variableName}}` syntax:
-
-- `{{min}}`, `{{max}}` - for length/value constraints
-- `{{length}}` - for exact length requirements
-- `{{expected}}` - for type mismatch messages
-
-**Example:**
-
-```typescript
-defaultTranslate('validation.string.min', { min: 5 });
-// "Must be at least 5 characters"
-```
-
-### setGlobalErrorMap()
-
-Sets the global Zod error map for all future schemas. Useful when you want all validation errors to
-use the same message formatter.
-
-```typescript
-function setGlobalErrorMap(t?: TranslateFunction): void;
-```
-
-**Usage:**
-
-```typescript
-import { setGlobalErrorMap } from '@nasnet/core/forms';
-
-// In your app initialization
-function App() {
-  const t = (key: string) => key;
-
-  // Set once at app startup
-  setGlobalErrorMap(t);
-
-  return <Router>...</Router>;
-}
-```
-
-### formatValidationError()
-
-Utility function to safely format error objects for display. Handles various input types.
-
-```typescript
-function formatValidationError(error: string | { message: string } | undefined): string;
-```
-
-**Usage:**
-
-```typescript
-import { formatValidationError } from '@nasnet/core/forms';
-
-// From string
-formatValidationError('Email is invalid');
-// "Email is invalid"
-
-// From error object
-formatValidationError({ message: 'Email is invalid' });
-// "Email is invalid"
-
-// From undefined/null
-formatValidationError(undefined);
-// ""
-```
-
----
-
 ## Error Flow Through Validation Pipeline
 
 Errors flow through the 7-stage validation pipeline, with different error types being generated at
@@ -512,7 +386,7 @@ each stage:
 - **Error Type:** Zod schema violations
 - **Examples:** Type mismatches, missing required fields
 - **Mapping:** Zod errors → ValidationError
-- **Message Source:** i18n or default messages
+- **Message Source:** Default messages
 
 ### Stage 2: Syntax (Client-Side)
 
@@ -1003,11 +877,10 @@ describe('Form Error Handling', () => {
 3. **Clear server errors on field edit** - Users expect errors to disappear when they start typing
 4. **Group similar errors** - Use `groupErrorsByField()` when displaying multiple errors per field
 5. **Distinguish error types** - Show conflicts differently from validation errors
-6. **Localize messages** - Use i18n for user-facing error messages
-7. **Handle nested paths** - Test with deeply nested field errors (e.g., `peers.0.endpoint`)
-8. **Don't repeat errors** - Use `combineFieldErrors()` to avoid duplicate messages
-9. **Display warnings prominently** - Don't bury non-blocking warnings in the UI
-10. **Test error scenarios** - Include error cases in component tests
+6. **Handle nested paths** - Test with deeply nested field errors (e.g., `peers.0.endpoint`)
+7. **Don't repeat errors** - Use `combineFieldErrors()` to avoid duplicate messages
+8. **Display warnings prominently** - Don't bury non-blocking warnings in the UI
+9. **Test error scenarios** - Include error cases in component tests
 
 ---
 
@@ -1015,4 +888,3 @@ describe('Form Error Handling', () => {
 
 - [Validation Pipeline](./validation-pipeline.md) - Complete 7-stage validation flow
 - [Form Architecture](../sub-libraries/forms.md) - Core forms library overview
-- [i18n Flow](./internationalization-flow.md) - Internationalization patterns

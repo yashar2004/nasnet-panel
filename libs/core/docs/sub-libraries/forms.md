@@ -16,7 +16,7 @@
 9. [Wizard Persistence](#wizard-persistence)
 10. [Form-Resource Sync](#form-resource-sync)
 11. [Backend Error Mapping](#backend-error-mapping)
-12. [Error Messages & i18n](#error-messages--i18n)
+12. [Error Messages](#error-messages)
 13. [Validation Strategy Configuration](#validation-strategy-configuration)
 
 ---
@@ -35,7 +35,6 @@ The `@nasnet/core/forms` library provides a comprehensive forms system featuring
 - **Wizard persistence** — Multi-step wizard support with step tracking and TTL
 - **Universal State v2 integration** — Sync forms with router state (optimistic updates, conflict
   detection)
-- **Locale-aware error messages** — i18n-aware error message translation
 
 ---
 

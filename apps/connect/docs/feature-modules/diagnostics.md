@@ -355,9 +355,9 @@ Used to populate `ispInfo` in the `TroubleshootWizard` with contact details.
 
 ---
 
-## Internationalization
+## Troubleshoot Messages
 
-**File:** `libs/features/diagnostics/src/i18n/troubleshoot-messages.ts`
+**File:** `libs/features/diagnostics/src/troubleshoot-messages.ts`
 
 Exports `TROUBLESHOOT_MESSAGES` — a typed map of step IDs and fix codes to user-readable strings.
 Used by the wizard presenters to display step descriptions, fix suggestions, and ISP contact

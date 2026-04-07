@@ -55,7 +55,6 @@ describe('getErrorInfo', () => {
       action: 'Install required package',
       severity: 'warning',
       recoverable: false,
-      i18nKey: 'errors.platform.capabilityUnavailable',
     });
   });
 
@@ -75,14 +74,12 @@ describe('getErrorInfo', () => {
       message: 'An error occurred. Please try again.',
       severity: 'error',
       recoverable: true,
-      i18nKey: 'errors.generic',
     });
   });
 
   it('returns category info for unknown codes in known categories', () => {
     const info = getErrorInfo('P199');
     expect(info.message).toBe('Platform feature unavailable');
-    expect(info.i18nKey).toBe('errors.platform.generic');
   });
 });
 

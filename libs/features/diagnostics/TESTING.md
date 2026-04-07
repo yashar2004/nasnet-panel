@@ -83,7 +83,7 @@ npx nx test diagnostics
 - window.matchMedia mock
 - IntersectionObserver mock
 - ResizeObserver mock
-- Console warning suppressors (Zustand, Apollo, i18next)
+- Console warning suppressors (Zustand, Apollo)
 
 ### Known Configuration Challenges
 
@@ -107,7 +107,6 @@ TroubleshootWizard
 1. `@nasnet/ui/tokens` imports from `dist/` (build artifact)
 2. Some patterns import from features (potential circular dependency)
 3. Apollo Client initialization warnings
-4. i18next initialization in test environment
 
 ### Workarounds
 

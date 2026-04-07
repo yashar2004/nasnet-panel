@@ -42,11 +42,10 @@
 | **React Hook Form** | 7+ | Forms | ~9KB | Minimal re-renders, validation, field-level errors |
 | **Zod** | 3+ | Validation | ~14KB | Type-safe schemas, runtime validation (auto-generated from GraphQL) |
 | **Framer Motion** | 11+ | Animation | ~30KB | Gesture support, performant animations, spring physics |
-| **date-fns** | 3+ | Date/Time | ~5KB | Tree-shakeable (import only what you use), immutable, i18n |
+| **date-fns** | 3+ | Date/Time | ~5KB | Tree-shakeable (import only what you use), immutable |
 | **Lucide React** | Latest | Icons | ~2KB + icons | 1400+ icons, tree-shakeable, accessible SVGs |
 | **TanStack Router** | 1+ | Routing | ~12KB | Type-safe routes, code-splitting, search params |
 | **Sonner** | Latest | Toasts | ~3KB | By shadcn author, perfect integration, accessible |
-| **react-i18next** | 14+ | i18n | ~8KB | Industry standard, namespace per feature, RTL support |
 | **@tanstack/react-virtual** | 3+ | Virtualization | ~5KB | Headless virtualization for large lists (>20 items) |
 
 **Total Frontend Bundle Target:** ~1.5-2.5MB gzipped (with code-splitting)
@@ -263,12 +262,11 @@
 |------------|---------|---------|--------|--------------|
 | **TanStack Router** | 1+ | Type-Safe Routing | ~12KB | Type-safe routes, code-splitting, search params validation, file-based routing |
 
-#### Utilities & i18n
+#### Utilities
 
 | Technology | Version | Purpose | Bundle | Why |
 |------------|---------|---------|--------|-----|
-| **date-fns** | 3+ | Date Manipulation | ~5KB | Tree-shakeable (import only used functions), immutable, i18n support |
-| **react-i18next** | 14+ | Internationalization | ~8KB | Industry standard, namespace per feature, lazy loading, RTL support, interpolation |
+| **date-fns** | 3+ | Date Manipulation | ~5KB | Tree-shakeable (import only used functions), immutable |
 | **@tanstack/react-virtual** | 3+ | List Virtualization | ~5KB | Headless virtualization, render only visible items, supports variable heights |
 | **clsx** | Latest | Class Utilities | ~1KB | Conditional className builder, works with Tailwind |
 | **tailwind-merge** | Latest | Class Merging | ~2KB | Merge Tailwind classes intelligently (handle conflicts) |

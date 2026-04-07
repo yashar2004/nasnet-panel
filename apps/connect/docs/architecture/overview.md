@@ -95,7 +95,7 @@ modules.
 
 The entry point and routing layer. Defined in `apps/connect/src/`.
 
-- `main.tsx` — React DOM mount, router creation, i18n bootstrap, XState Inspector (dev)
+- `main.tsx` — React DOM mount, router creation, XState Inspector (dev)
 - `routes/__root.tsx` — Root route: wraps all routes in the `Providers` stack, renders
   `ResponsiveShell`
 - `routes/**/*.tsx` — File-based route tree (47 routes total)

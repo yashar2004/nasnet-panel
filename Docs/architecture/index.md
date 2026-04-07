@@ -122,7 +122,6 @@
     - [Form Architecture](./frontend-architecture.md#form-architecture)
     - [Performance Optimization](./frontend-architecture.md#performance-optimization)
     - [Accessibility](./frontend-architecture.md#accessibility)
-    - [Internationalization](./frontend-architecture.md#internationalization)
   
   - [Data Architecture](./data-architecture.md)
     - [Universal State v2 Overview](./data-architecture.md#universal-state-v2-overview)

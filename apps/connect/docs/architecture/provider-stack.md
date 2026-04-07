@@ -59,7 +59,7 @@ reverse.
 
 ---
 
-The application is now English-only and no longer includes separate i18n or direction providers.
+The application is now English-only and does not include separate direction providers.
 
 **What it does:**
 
@@ -111,7 +111,7 @@ first paint.
 - Exposes the `usePlatform()` hook consumed by every Pattern component in the three-layer component
   system
 
-**Why it's fourth:** Platform detection doesn't depend on i18n, direction, or theme. It must be
+**Why it's fourth:** Platform detection doesn't depend on direction or theme. It must be
 above AnimationProvider because the animation system uses platform context to adjust animation
 tokens (e.g., shorter durations on mobile).
 

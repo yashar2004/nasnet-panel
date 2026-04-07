@@ -79,8 +79,6 @@ console.warn = function () {
   if (msg.includes('devtools middleware')) return;
   // Suppress Apollo Client connectToDevTools deprecation
   if (msg.includes('connectToDevTools')) return;
-  // Suppress i18next warnings
-  if (msg.includes('i18next')) return;
   originalConsoleWarn.apply(console, args);
 };
 console.error = function () {

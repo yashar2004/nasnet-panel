@@ -294,7 +294,6 @@ Development organized into three independent tracks that synchronize at mileston
 **Workstreams:** A + B (Full Stack)
 
 **Exit Criteria:**
-- ✅ i18n functional (10 languages with RTL)
 - ✅ Backup/restore working (dual format: SQLite + SQL dump)
 - ✅ VPN management (WireGuard client/server)
 - ✅ Log viewer with streaming and search
@@ -380,7 +379,7 @@ CRITICAL PATH: Gate 1 → Gate 2 → Gate 3 → Gate 5 → Gate 7 → MVP
 | **4-6** | Gate 3 | Router Adapter | MikroTik connection, protocol fallback |
 | **5-8** | Gate 4 | Frontend Shell | React app, design system, components |
 | **7-12** | Gate 5 | Core Features | Dashboard, interfaces, firewall, state sync |
-| **10-15** | Gate 6 | Advanced Features | i18n, backup, VPN, wizard, logs |
+| **10-15** | Gate 6 | Advanced Features | Backup, VPN, wizard, logs |
 | **14-18** | Gate 7 | Production Polish | Optimization, testing, docs |
 | **18-20** | Buffer | Final Polish | Bug fixes, edge cases |
 
@@ -407,7 +406,6 @@ CRITICAL PATH: Gate 1 → Gate 2 → Gate 3 → Gate 5 → Gate 7 → MVP
 | **Wireless** | WiFi interfaces, security settings, client list | Channel scanning, capabilities detection |
 | **System** | Backup/restore, system logs, diagnostics | Dual backup format, log streaming |
 | **Setup Wizard** | 5-step guided setup | Integrated in main app (not separate) |
-| **Localization** | 10 languages, RTL support | react-i18next, namespace per feature |
 
 #### Quality Requirements
 
@@ -550,7 +548,6 @@ Total: 20 weeks maximum
 | **R5** | Resource exhaustion | HIGH | Pre-flight checks + soft limits + GOMEMLIMIT + monitoring | Backend Team |
 | **R6** | Test infrastructure delays | MEDIUM | Parallel workstream C starts early + CHR Docker ready by Gate 4 | QA Team |
 | **R7** | Scope creep | MEDIUM | Locked MVP scope + defer list + no feature adds during implementation | PM |
-| **R8** | i18n complexity | MEDIUM | Namespace splitting + Weblate integration + RTL testing early | Frontend Team |
 | **R9** | Performance regression | MEDIUM | CI benchmarks + Lighthouse scores + size gates | Full Stack |
 | **R10** | CHR Docker licensing | LOW | Verify licensing for CI use + fallback to mocks if needed | Legal/DevOps |
 

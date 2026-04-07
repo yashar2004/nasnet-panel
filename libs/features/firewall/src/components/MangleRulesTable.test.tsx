@@ -50,41 +50,6 @@ vi.mock('@nasnet/ui/patterns/mangle-rule-editor', () => ({
   ),
 }));
 
-// Mock i18next
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'mangle.table.columns.position': '#',
-        'mangle.table.columns.chain': 'Chain',
-        'mangle.table.columns.action': 'Action',
-        'mangle.table.columns.markValue': 'Mark Value',
-        'mangle.table.columns.matchers': 'Matchers',
-        'mangle.table.columns.packets': 'Packets',
-        'mangle.table.columns.bytes': 'Bytes',
-        'mangle.table.columns.enabled': 'Enabled',
-        'mangle.table.columns.actions': 'Actions',
-        'mangle.table.noRules': 'No mangle rules found',
-        'mangle.table.noRulesInChain': 'No rules in this chain',
-        'mangle.table.unused': 'unused',
-        'mangle.notifications.error.load': 'Error loading mangle rules',
-        'mangle.dialogs.editRule.title': 'Edit Mangle Rule',
-        'mangle.dialogs.editRule.description': 'Modify the mangle rule configuration',
-        'mangle.dialogs.addRule.title': 'Add Mangle Rule',
-        'mangle.dialogs.addRule.description': 'Create a new mangle rule',
-        'mangle.dialogs.deleteRule.title': 'Delete Mangle Rule?',
-        'mangle.dialogs.deleteRule.description': 'This action cannot be undone.',
-        'mangle.dialogs.deleteRule.warning': 'This will:',
-        'mangle.dialogs.deleteRule.consequences':
-          'Remove the rule, Reorder subsequent rules, Take effect immediately',
-        'button.cancel': 'Cancel',
-        'button.delete': 'Delete',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
-
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {

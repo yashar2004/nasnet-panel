@@ -15,24 +15,6 @@ vi.mock('@nasnet/ui/layouts', () => ({
   usePlatform: vi.fn(() => 'desktop'),
 }));
 
-// Mock i18next
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'alerts:quietHours.title': 'Quiet Hours',
-        'alerts:quietHours.description': 'Suppress non-critical alerts during specified hours',
-        'alerts:quietHours.activeDays': 'Active Days',
-        'alerts:quietHours.activeDaysDescription': 'Select days when quiet hours apply',
-        'alerts:quietHours.bypassCritical': 'Bypass Critical Alerts',
-        'alerts:quietHours.bypassCriticalDescription': 'Allow critical alerts during quiet hours',
-        'alerts:quietHours.duration': 'Duration',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
-
 describe('QuietHoursConfig', () => {
   describe('platform routing', () => {
     it('renders Desktop presenter on desktop platform', async () => {
