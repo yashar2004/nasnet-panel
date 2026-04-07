@@ -4,7 +4,7 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["vitest/globals", "node"],
     "composite": false,
-    "declaration": true
+    "declaration": false
   },
   "include": [
     "test-setup.ts",

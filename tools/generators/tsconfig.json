@@ -4,7 +4,7 @@
     "module": "Node16",
     "moduleResolution": "Node16",
     "outDir": "./dist",
-    "declaration": true,
+    "declaration": false,
     "rootDir": ".",
     "composite": false,
     "declarationMap": false,

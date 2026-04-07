@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "types": ["node", "vite/client"],
-    "declaration": true,
+    "declaration": false,
     "jsx": "react-jsx",
     "composite": false,
     "tsBuildInfoFile": "../../../dist/out-tsc/ui-primitives.tsbuildinfo"

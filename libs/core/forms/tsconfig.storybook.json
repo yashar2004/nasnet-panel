@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "types": ["node", "vite/client"],
-    "composite": true
+    "composite": false
   },
   "include": ["src/**/*.stories.ts", "src/**/*.stories.tsx"]
 }

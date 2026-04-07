@@ -1,12 +1,11 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "composite": true,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "composite": false,
     "declarationMap": false,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -25,6 +24,5 @@
     "src/**/*.spec.tsx",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
-  ],
-  "references": [{ "path": "../types/tsconfig.lib.json" }]
+  ]
 }

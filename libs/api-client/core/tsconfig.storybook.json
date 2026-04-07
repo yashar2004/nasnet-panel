@@ -4,7 +4,7 @@
     "jsx": "react-jsx",
     "types": ["node", "vite/client"],
     "composite": false,
-    "declaration": true
+    "declaration": false
   },
   "include": ["src/**/*.stories.ts", "src/**/*.stories.tsx"]
 }

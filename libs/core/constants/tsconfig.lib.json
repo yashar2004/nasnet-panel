@@ -11,7 +11,7 @@
     "moduleResolution": "Bundler",
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "vite/client"],
-    "declaration": true
+    "declaration": false
   },
   "include": ["src/**/*.ts"],
   "exclude": [

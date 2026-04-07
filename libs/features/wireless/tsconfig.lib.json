@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "composite": false,
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "emitDeclarationOnly": false,
     "types": ["node", "vite/client"]

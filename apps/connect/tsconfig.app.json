@@ -12,7 +12,7 @@
       "vite/client"
     ],
     "composite": false,
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "emitDeclarationOnly": false,
     "paths": {

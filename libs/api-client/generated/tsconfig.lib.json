@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "emitDeclarationOnly": true,
-    "declaration": true,
+    "emitDeclarationOnly": false,
+    "declaration": false,
     "composite": false,
     "module": "ESNext",
     "moduleResolution": "Bundler",

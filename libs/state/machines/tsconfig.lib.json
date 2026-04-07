@@ -2,10 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    "declaration": false,
+    "emitDeclarationOnly": false,
     "types": ["node", "vite/client"],
-    "composite": true,
+    "composite": false,
     "tsBuildInfoFile": "../../../dist/out-tsc/state-machines.tsbuildinfo"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
@@ -17,9 +17,5 @@
     "src/**/*.test.tsx",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx"
-  ],
-  "references": [
-    { "path": "../../core/types/tsconfig.lib.json" },
-    { "path": "../../core/utils/tsconfig.lib.json" }
   ]
 }

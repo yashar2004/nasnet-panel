@@ -4,7 +4,7 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["vitest/globals", "node", "@testing-library/jest-dom"],
     "composite": false,
-    "declaration": true
+    "declaration": false
   },
   "include": [
     "vitest.setup.ts",
