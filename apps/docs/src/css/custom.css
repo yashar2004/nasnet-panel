@@ -15,8 +15,8 @@
    1a. Font Imports & Root Variables
    =========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&display=swap';
 
 :root {
   /* Typography — buble theme inspired */
@@ -44,7 +44,7 @@
 
   /* Backgrounds & Surfaces (Light Mode) */
   --ifm-background-color: #f1f5f9; /* slate-100 */
-  --ifm-background-surface-color: #ffffff; /* white */
+  --ifm-background-surface-color: #fff; /* white */
 
   /* Font Colors (Light Mode) */
   --ifm-font-color-base: #0f172a; /* slate-900 */
@@ -59,7 +59,7 @@
 
   /* Custom NasNet Tokens */
   --nasnet-accent: #efc729;
-  --nasnet-surface: #ffffff;
+  --nasnet-surface: #fff;
   --nasnet-surface-alt: #f8fafc; /* slate-50 */
 }
 
@@ -947,7 +947,7 @@ table tbody td {
   --mermaid-border: #dbe4f0;
 
   /* Nodes use solid white with Trust Blue borders and text */
-  --mermaid-node-bg: #ffffff;
+  --mermaid-node-bg: #fff;
   --mermaid-node-border: var(--ifm-color-primary); /* #4972ba */
   --mermaid-node-text: var(--ifm-color-primary-darkest); /* #2e4d85 */
 
@@ -958,7 +958,7 @@ table tbody td {
 
   /* Lines and text on lines (Trust Blue) */
   --mermaid-line: var(--ifm-color-primary);
-  --mermaid-label-bg: #ffffff;
+  --mermaid-label-bg: #fff;
   --mermaid-label-text: var(--ifm-color-primary-darkest);
 
   /* Notes (Golden Amber Accent) */
@@ -974,7 +974,7 @@ table tbody td {
   /* Nodes: Solid deep Trust Blue with light text */
   --mermaid-node-bg: var(--ifm-color-primary-darkest); /* #3d66ad */
   --mermaid-node-border: var(--ifm-color-primary-lighter); /* #a7bde3 */
-  --mermaid-node-text: #ffffff;
+  --mermaid-node-text: #fff;
 
   /* Clusters: Faint Trust Blue */
   --mermaid-cluster-bg: rgba(127, 158, 212, 0.08);
@@ -984,7 +984,7 @@ table tbody td {
   /* Lines: Vibrant Trust Blue */
   --mermaid-line: var(--ifm-color-primary-lighter);
   --mermaid-label-bg: #0f1524; /* Match container */
-  --mermaid-label-text: #ffffff;
+  --mermaid-label-text: #fff;
 
   /* Notes (Golden Amber Accent) */
   --mermaid-note-bg: rgba(239, 199, 41, 0.15);

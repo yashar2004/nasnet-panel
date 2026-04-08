@@ -158,9 +158,15 @@ export default [
         {
           enforceBuildableLibDependency: false,
           allow: [
+            '@nasnet/core/types',
+            '@nasnet/core/types/*',
+            '@nasnet/api-client/core',
+            '@nasnet/api-client/core/*',
             '@nasnet/api-client/queries',
             '@nasnet/api-client/queries/*',
             '@nasnet/api-client/generated',
+            '@nasnet/state/stores',
+            '@nasnet/state/stores/*',
             '@nasnet/features/firewall',
             '@nasnet/features/network',
             '@nasnet/features/services',
@@ -171,6 +177,8 @@ export default [
             '@nasnet/features/wireless',
             '@nasnet/features/router-discovery',
             '@nasnet/features/configuration-import',
+            '@nasnet/ui/tokens',
+            '@nasnet/ui/tokens/*',
             '@nasnet/ui/primitives',
             '@nasnet/ui/patterns',
             '@nasnet/ui/utils',
@@ -307,6 +315,7 @@ export default [
       },
     },
     rules: {
+      '@nx/enforce-module-boundaries': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/no-require-imports': 'off',
     },

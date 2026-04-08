@@ -11,7 +11,7 @@ import (
 	"backend/generated/ent/serviceinstance"
 
 	_ "github.com/mattn/go-sqlite3" // SQLite driver for tests
-	"github.com/rs/zerolog"
+	"go.uber.org/zap"
 )
 
 func TestNewResourceManager(t *testing.T) {
@@ -21,7 +21,7 @@ func TestNewResourceManager(t *testing.T) {
 
 		rm, err := NewResourceManager(ResourceManagerConfig{
 			Store:  client,
-			Logger: zerolog.Nop(),
+			Logger: zap.NewNop(),
 		})
 
 		if err != nil {
@@ -40,7 +40,7 @@ func TestNewResourceManager(t *testing.T) {
 	t.Run("Error_NilStore", func(t *testing.T) {
 		_, err := NewResourceManager(ResourceManagerConfig{
 			Store:  nil,
-			Logger: zerolog.Nop(),
+			Logger: zap.NewNop(),
 		})
 
 		if err == nil {
@@ -60,7 +60,7 @@ func TestResourceManager_ReadMemInfo(t *testing.T) {
 
 	rm, err := NewResourceManager(ResourceManagerConfig{
 		Store:  client,
-		Logger: zerolog.Nop(),
+		Logger: zap.NewNop(),
 	})
 	if err != nil {
 		t.Fatalf("Failed to create ResourceManager: %v", err)
@@ -100,7 +100,7 @@ func TestResourceManager_GetSystemResources(t *testing.T) {
 
 	rm, err := NewResourceManager(ResourceManagerConfig{
 		Store:  client,
-		Logger: zerolog.Nop(),
+		Logger: zap.NewNop(),
 	})
 	if err != nil {
 		t.Fatalf("Failed to create ResourceManager: %v", err)
@@ -183,7 +183,7 @@ func TestResourceManager_GetAllocatedResources(t *testing.T) {
 
 	rm, err := NewResourceManager(ResourceManagerConfig{
 		Store:  client,
-		Logger: zerolog.Nop(),
+		Logger: zap.NewNop(),
 	})
 	if err != nil {
 		t.Fatalf("Failed to create ResourceManager: %v", err)
@@ -303,7 +303,7 @@ func TestResourceManager_CheckResourceAvailability(t *testing.T) {
 
 	rm, err := NewResourceManager(ResourceManagerConfig{
 		Store:  client,
-		Logger: zerolog.Nop(),
+		Logger: zap.NewNop(),
 	})
 	if err != nil {
 		t.Fatalf("Failed to create ResourceManager: %v", err)
@@ -430,7 +430,7 @@ func TestResourceManager_GenerateSuggestions(t *testing.T) {
 
 	rm, err := NewResourceManager(ResourceManagerConfig{
 		Store:  client,
-		Logger: zerolog.Nop(),
+		Logger: zap.NewNop(),
 	})
 	if err != nil {
 		t.Fatalf("Failed to create ResourceManager: %v", err)

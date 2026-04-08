@@ -13,9 +13,9 @@ import (
 
 	"backend/internal/events"
 
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 )
 
 // mockEventBus is a simple mock implementation of EventBus for testing
@@ -65,7 +65,7 @@ func (m *mockEventBus) reset() {
 func TestNewResourceLimiter(t *testing.T) {
 	t.Run("requires EventBus", func(t *testing.T) {
 		config := ResourceLimiterConfig{
-			Logger: zerolog.Nop(),
+			Logger: zap.NewNop().Sugar(),
 		}
 		_, err := NewResourceLimiter(config)
 		assert.Error(t, err)
@@ -76,7 +76,7 @@ func TestNewResourceLimiter(t *testing.T) {
 		bus := newMockEventBus()
 		config := ResourceLimiterConfig{
 			EventBus: bus,
-			Logger:   zerolog.Nop(),
+			Logger:   zap.NewNop().Sugar(),
 		}
 		rl, err := NewResourceLimiter(config)
 		require.NoError(t, err)
@@ -91,7 +91,7 @@ func TestApplyMemoryLimitSuccess(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -108,12 +108,12 @@ func TestApplyMemoryLimitSuccess(t *testing.T) {
 	err = os.MkdirAll(CgroupBasePath, 0755)
 	require.NoError(t, err)
 
-	// Apply memory limit
-	err = rl.ApplyMemoryLimit(pid, memoryMB)
+	instanceID := fmt.Sprintf("instance-%d", pid)
+
+	err = rl.ApplyMemoryLimit(context.Background(), pid, memoryMB, instanceID, "test-feature")
 	require.NoError(t, err)
 
-	// Verify cgroup files were created
-	cgroupPath := filepath.Join(CgroupBasePath, fmt.Sprintf("instance-%d", pid))
+	cgroupPath := filepath.Join(CgroupBasePath, instanceID)
 
 	// Check memory.max
 	memoryMaxPath := filepath.Join(cgroupPath, "memory.max")
@@ -138,7 +138,7 @@ func TestGetResourceUsage(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -159,7 +159,7 @@ func TestMonitoringLoopTriggersWarning(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -174,15 +174,8 @@ func TestMonitoringLoopTriggersWarning(t *testing.T) {
 	// Memory limit of 1MB should trigger warning since current usage is higher
 	memoryLimitMB := 1
 
-	callbackCalled := false
-	var callbackUsage *ResourceUsage
-	callback := func(u *ResourceUsage) {
-		callbackCalled = true
-		callbackUsage = u
-	}
-
 	// Start monitoring with short interval for testing
-	err = rl.StartMonitoring(pid, memoryLimitMB, callback)
+	err = rl.StartMonitoring(context.Background(), pid, "test-instance", "test-feature", memoryLimitMB)
 	require.NoError(t, err)
 
 	// Wait for at least one monitoring cycle (we'll wait 2 seconds for safety)
@@ -190,10 +183,6 @@ func TestMonitoringLoopTriggersWarning(t *testing.T) {
 
 	// Stop monitoring
 	rl.StopMonitoring(pid)
-
-	// Verify callback was called
-	assert.True(t, callbackCalled, "callback should have been called")
-	assert.NotNil(t, callbackUsage)
 
 	// Verify warning event was published (should trigger since usage > 80% of limit)
 	events := bus.getPublishedEvents()
@@ -216,7 +205,7 @@ func TestGracefulFallbackWhenCgroupsUnavailable(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -228,7 +217,7 @@ func TestGracefulFallbackWhenCgroupsUnavailable(t *testing.T) {
 	memoryMB := 64
 
 	// Should not return error when cgroups unavailable
-	err = rl.ApplyMemoryLimit(pid, memoryMB)
+	err = rl.ApplyMemoryLimit(context.Background(), pid, memoryMB, "test-instance", "test-feature")
 	assert.NoError(t, err, "should gracefully handle cgroups unavailability")
 }
 
@@ -237,7 +226,7 @@ func TestInvalidPIDHandling(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -251,13 +240,13 @@ func TestInvalidPIDHandling(t *testing.T) {
 	})
 
 	t.Run("StartMonitoring with invalid PID", func(t *testing.T) {
-		err := rl.StartMonitoring(0, 64, nil)
+		err := rl.StartMonitoring(context.Background(), 0, "test-instance", "test-feature", 64)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "invalid PID")
 	})
 
 	t.Run("StartMonitoring with negative PID", func(t *testing.T) {
-		err := rl.StartMonitoring(-1, 64, nil)
+		err := rl.StartMonitoring(context.Background(), -1, "test-instance", "test-feature", 64)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "invalid PID")
 	})
@@ -268,7 +257,7 @@ func TestMemoryLimitTooLow(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -276,12 +265,12 @@ func TestMemoryLimitTooLow(t *testing.T) {
 	pid := os.Getpid()
 
 	// Test with memory limit below minimum
-	err = rl.ApplyMemoryLimit(pid, 8) // 8MB < 16MB minimum
+	err = rl.ApplyMemoryLimit(context.Background(), pid, 8, "test-instance", "test-feature")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "below minimum")
 
 	// Test with 0 MB
-	err = rl.ApplyMemoryLimit(pid, 0)
+	err = rl.ApplyMemoryLimit(context.Background(), pid, 0, "test-instance", "test-feature")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "below minimum")
 }
@@ -291,7 +280,7 @@ func TestCgroupDirectoryCreation(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -304,11 +293,12 @@ func TestCgroupDirectoryCreation(t *testing.T) {
 	memoryMB := 32
 
 	// Ensure clean state
-	cgroupPath := filepath.Join(CgroupBasePath, fmt.Sprintf("instance-%d", pid))
+	instanceID := fmt.Sprintf("instance-%d", pid)
+	cgroupPath := filepath.Join(CgroupBasePath, instanceID)
 	os.RemoveAll(cgroupPath)
 
 	// Apply memory limit (should create directory)
-	err = rl.ApplyMemoryLimit(pid, memoryMB)
+	err = rl.ApplyMemoryLimit(context.Background(), pid, memoryMB, instanceID, "test-feature")
 	require.NoError(t, err)
 
 	// Verify directory was created
@@ -328,7 +318,7 @@ func TestStopMonitoring(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -337,7 +327,7 @@ func TestStopMonitoring(t *testing.T) {
 	memoryMB := 64
 
 	// Start monitoring
-	err = rl.StartMonitoring(pid, memoryMB, nil)
+	err = rl.StartMonitoring(context.Background(), pid, "test-instance", "test-feature", memoryMB)
 	require.NoError(t, err)
 
 	// Verify monitor was registered
@@ -361,7 +351,7 @@ func TestClose(t *testing.T) {
 	bus := newMockEventBus()
 	config := ResourceLimiterConfig{
 		EventBus: bus,
-		Logger:   zerolog.Nop(),
+		Logger:   zap.NewNop().Sugar(),
 	}
 	rl, err := NewResourceLimiter(config)
 	require.NoError(t, err)
@@ -370,7 +360,7 @@ func TestClose(t *testing.T) {
 	memoryMB := 64
 
 	// Start monitoring for multiple PIDs
-	err = rl.StartMonitoring(pid, memoryMB, nil)
+	err = rl.StartMonitoring(context.Background(), pid, "test-instance", "test-feature", memoryMB)
 	require.NoError(t, err)
 
 	// Verify monitors exist

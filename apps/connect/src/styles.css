@@ -1,8 +1,9 @@
 @import 'tailwindcss';
-@config "../tailwind.config.js";
-
-/* Import generated design tokens from token pipeline */
 @import '@nasnet/ui/tokens/variables.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+@config "../tailwind.config.js";
 
 /* ========================================
  * FONT FACE DECLARATIONS
@@ -10,15 +11,13 @@
  * Supports offline/air-gapped environments
  * ======================================== */
 
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/jetbrains-mono';
-
 @font-face {
   font-family: 'Satoshi';
   font-style: normal;
   font-weight: 300 900;
   font-display: swap;
-  src: local('Satoshi Variable'), local('Satoshi'), local('SatoshiVariable'),
+  src:
+    local('Satoshi Variable'), local('Satoshi'), local('SatoshiVariable'),
     local('Satoshi-Variable'), local('SatoshiVar');
 }
 
@@ -654,6 +653,7 @@
   /* Default focus-visible styles - applied globally */
   *:focus-visible {
     outline: none;
+
     --tw-ring-color: hsl(var(--ring));
     --tw-ring-offset-width: 2px;
     --tw-ring-offset-color: hsl(var(--background));
