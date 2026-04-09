@@ -14,7 +14,7 @@
  */
 
 import React, { memo, useState, useCallback } from 'react';
-import { Shield, ChevronDown, Loader2, Wifi } from 'lucide-react';
+import { Shield, ChevronDown, ChevronRight, Loader2, Wifi } from 'lucide-react';
 
 import { Link } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader, CardTitle, Button, Icon } from '@nasnet/ui/primitives';
@@ -86,33 +86,19 @@ function VPNClientsSummaryComponent({
   }, []);
 
   return (
-    <Card className={`${className}`}>
+    <Card className={className}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`h-10 w-10 rounded-xl ${bgColor} flex items-center justify-center`}>
-              <Icon
-                icon={Shield}
-                className={`h-5 w-5 ${statusColor}`}
-              />
+          <div className="flex items-center gap-2">
+            <div className="bg-secondary/10 dark:bg-secondary/20 flex h-8 w-8 items-center justify-center rounded-lg">
+              <Shield className="text-secondary h-4 w-4" aria-hidden="true" />
             </div>
-            <div>
-              <CardTitle className="text-base font-semibold">VPN Clients</CardTitle>
-              <p className={`text-sm ${statusColor} font-medium`}>{connectedCount} Connected</p>
-            </div>
+            <CardTitle className="text-base font-semibold">VPN Clients</CardTitle>
           </div>
           {linkTo && (
             <Link to={linkTo as '/'}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-1"
-              >
-                See All
-                <Icon
-                  icon={ChevronDown}
-                  className="h-4 w-4"
-                />
+              <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer rounded-full">
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </Button>
             </Link>
           )}
@@ -121,75 +107,46 @@ function VPNClientsSummaryComponent({
 
       <CardContent className="pt-0">
         {isLoading ?
-          <div className="flex items-center justify-center py-6">
-            <Icon
-              icon={Loader2}
-              className="text-muted-foreground h-6 w-6 animate-spin"
-            />
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
           </div>
-        : hasClients ?
-          <div className="mt-3 space-y-2">
-            {visibleClients.map((client) => (
-              <div
-                key={client.id}
-                className="bg-muted/50 dark:bg-muted/20 flex items-center gap-3 rounded-[var(--semantic-radius-input)] p-2"
-              >
-                <ProtocolIconBadge
-                  protocol={client.protocol}
-                  variant="sm"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="text-foreground truncate text-sm font-medium">{client.name}</p>
-                  <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                    {client.localAddress && (
-                      <span className="font-mono">{client.localAddress}</span>
-                    )}
-                    {client.uptime && (
-                      <>
-                        <span>•</span>
-                        <span>{client.uptime}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="bg-success h-2 w-2 animate-pulse rounded-full" />
-                </div>
-              </div>
-            ))}
-
-            {/* Show more/less toggle */}
-            {hasMore && (
-              <button
-                onClick={handleToggleExpanded}
-                className="text-muted-foreground hover:text-foreground flex w-full items-center justify-center gap-1 py-2 text-sm transition-colors"
-              >
-                {isExpanded ?
-                  <>
-                    <Icon
-                      icon={ChevronDown}
-                      className="h-4 w-4"
-                    />
-                    Show Less
-                  </>
-                : <>
-                    <Icon
-                      icon={ChevronDown}
-                      className="h-4 w-4"
-                    />
-                    Show {clients.length - maxVisible} More
-                  </>
-                }
-              </button>
-            )}
-          </div>
-        : <div className="flex flex-col items-center justify-center py-6 text-center">
-            <Icon
-              icon={Wifi}
-              className="text-muted-foreground/50 mb-2 h-8 w-8"
-            />
+        : connectedCount === 0 ?
+          <div className="flex h-full flex-1 flex-col items-center justify-center py-10 text-center">
+            <Shield className="text-muted-foreground mb-2 h-8 w-8 animate-pulse" />
             <p className="text-muted-foreground text-sm">No clients connected</p>
           </div>
+        : <>
+          {/* Total connected */}
+          <div className="flex items-center gap-3">
+            <Shield className="text-muted-foreground h-5 w-5" aria-hidden="true" />
+            <div>
+              <p className="text-foreground text-2xl font-bold">{connectedCount}</p>
+              <p className="text-muted-foreground text-xs">Total Connected</p>
+            </div>
+          </div>
+
+          {/* Per-protocol breakdown */}
+          {hasClients && (
+            <div className="border-border mt-3 space-y-1 border-t pt-3">
+              {Object.entries(
+                clients.reduce<Record<string, number>>((acc, c) => {
+                  const proto = c.protocol || 'other';
+                  acc[proto] = (acc[proto] || 0) + 1;
+                  return acc;
+                }, {})
+              ).map(([protocol, count]) => (
+                <div key={protocol} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-muted">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="bg-success absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
+                    <span className="bg-success relative inline-flex h-2.5 w-2.5 rounded-full" />
+                  </span>
+                  <span className="text-foreground flex-1 text-sm font-medium capitalize">{protocol}</span>
+                  <span className="text-muted-foreground tabular-nums text-sm">{count} {count === 1 ? 'user' : 'users'}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
         }
       </CardContent>
     </Card>

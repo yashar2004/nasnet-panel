@@ -113,16 +113,17 @@ export const InterfaceToggle = React.memo(function InterfaceToggle({
       {/* Toggle Switch */}
       <div
         className={cn('gap-component-sm flex items-center', className)}
-        onClick={handleSwitchClick}
+        onClick={(e) => e.stopPropagation()}
       >
         <Switch
           checked={!iface.disabled}
           disabled={toggleMutation.isPending}
+          onCheckedChange={() => {
+            const newDisabledState = !iface.disabled;
+            setPendingState(newDisabledState);
+            setShowConfirmation(true);
+          }}
           aria-label={iface.disabled ? `Enable ${iface.name}` : `Disable ${iface.name}`}
-          className={cn(
-            !iface.disabled &&
-              'data-[state=checked]:bg-success data-[state=checked]:hover:bg-success/90'
-          )}
         />
         {toggleMutation.isPending && (
           <span className="text-muted-foreground text-xs">
@@ -134,7 +135,10 @@ export const InterfaceToggle = React.memo(function InterfaceToggle({
       {/* Confirmation Dialog */}
       <ConfirmationDialog
         open={showConfirmation}
-        onOpenChange={setShowConfirmation}
+        onOpenChange={(open) => {
+          setShowConfirmation(open);
+          if (!open) setPendingState(null);
+        }}
         title={dialogTitle}
         description={dialogDescription}
         confirmLabel={confirmLabel}

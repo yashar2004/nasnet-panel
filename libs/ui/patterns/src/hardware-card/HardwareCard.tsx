@@ -9,7 +9,7 @@ import React, { useCallback } from 'react';
 
 import { Copy, Check } from 'lucide-react';
 
-import type { RouterboardInfo } from '@nasnet/core/types';
+import type { RouterboardInfo, SystemResource } from '@nasnet/core/types';
 import { Card, CardContent, CardHeader, CardTitle, Button, Skeleton } from '@nasnet/ui/primitives';
 
 import { useClipboard } from '../hooks';
@@ -19,6 +19,11 @@ export interface HardwareCardProps {
    * Routerboard hardware information
    */
   data?: RouterboardInfo | null;
+
+  /**
+   * Fallback system resource data (for CHR/x86 without routerboard)
+   */
+  systemResource?: SystemResource | null;
 
   /**
    * Loading state indicator
@@ -135,6 +140,7 @@ SerialNumberRow.displayName = 'SerialNumberRow';
  */
 export const HardwareCard = React.memo(function HardwareCard({
   data,
+  systemResource,
   isLoading = false,
   error = null,
 }: HardwareCardProps) {
@@ -143,44 +149,53 @@ export const HardwareCard = React.memo(function HardwareCard({
     return <SkeletonState />;
   }
 
-  // Show fallback if error or no data
-  if (error || !data) {
-    return <FallbackState />;
+  // Routerboard data available (physical MikroTik device)
+  if (data) {
+    const showFactoryFirmware = data.factoryFirmware !== data.currentFirmware;
+
+    return (
+      <Card className="rounded-card-sm md:rounded-card-lg shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+            Hardware Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-0 pt-0">
+          <SerialNumberRow serialNumber={data.serialNumber} />
+          <DetailRow label="Model" value={data.model} />
+          <DetailRow label="Firmware" value={data.currentFirmware} />
+          {showFactoryFirmware && (
+            <DetailRow label="Factory Firmware" value={data.factoryFirmware} />
+          )}
+          <DetailRow label="Revision" value={data.revision} />
+        </CardContent>
+      </Card>
+    );
   }
 
-  // Check if factory firmware is different from current
-  const showFactoryFirmware = data.factoryFirmware !== data.currentFirmware;
+  // Fallback to system resource data (CHR, x86, virtual)
+  if (systemResource) {
+    const totalMemoryMB = Math.round(systemResource.totalMemory / 1024 / 1024);
+    const totalDiskMB = Math.round(systemResource.totalHddSpace / 1024 / 1024);
 
-  return (
-    <Card className="rounded-card-sm md:rounded-card-lg shadow-sm transition-shadow hover:shadow-md">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-50">
-          Hardware Details
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-0 pt-0">
-        <SerialNumberRow serialNumber={data.serialNumber} />
-        <DetailRow
-          label="Model"
-          value={data.model}
-        />
-        <DetailRow
-          label="Firmware"
-          value={data.currentFirmware}
-        />
-        {showFactoryFirmware && (
-          <DetailRow
-            label="Factory Firmware"
-            value={data.factoryFirmware}
-          />
-        )}
-        <DetailRow
-          label="Revision"
-          value={data.revision}
-        />
-      </CardContent>
-    </Card>
-  );
+    return (
+      <Card className="rounded-card-sm md:rounded-card-lg shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+            Hardware Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-0 pt-0">
+          <DetailRow label="Platform" value={systemResource.platform} />
+          <DetailRow label="Board" value={systemResource.boardName} />
+          <DetailRow label="Total Memory" value={`${totalMemoryMB} MB`} />
+          <DetailRow label="Total Storage" value={`${totalDiskMB} MB`} />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return <FallbackState />;
 });
 
 HardwareCard.displayName = 'HardwareCard';

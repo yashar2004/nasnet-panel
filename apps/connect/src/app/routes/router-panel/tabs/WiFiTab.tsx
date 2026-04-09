@@ -9,7 +9,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { useWirelessInterfaces, useWirelessClients } from '@nasnet/api-client/queries';
 import { useConnectionStore } from '@nasnet/state/stores';
-import { WifiStatusHero, WifiInterfaceList, ConnectedClientsTable, WifiQuickActions, WifiSecuritySummary, LoadingSkeleton } from '../../../pages/wifi/components';
+import { WifiStatusHero, WifiInterfaceList, ConnectedClientsTable, WifiQuickActions, LoadingSkeleton } from '../../../pages/wifi/components';
 export const WiFiTab = React.memo(function WiFiTab() {
   const {
     id: routerId
@@ -53,12 +53,8 @@ export const WiFiTab = React.memo(function WiFiTab() {
       </div>;
   }
   return <div className="px-page-mobile md:px-page-tablet lg:px-page-desktop animate-fade-in-up mx-auto max-w-7xl space-y-6 py-4 md:py-6">
-      {/* Page Header with Quick Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-foreground font-display text-2xl font-semibold">{"WiFi"}</h1>
-          <p className="text-muted-foreground text-sm">{"description"}</p>
-        </div>
+      {/* Quick Actions */}
+      <div className="flex justify-end">
         <WifiQuickActions onRefresh={handleRefresh} isRefreshing={isRefreshing} />
       </div>
 
@@ -67,9 +63,6 @@ export const WiFiTab = React.memo(function WiFiTab() {
 
       {/* Connected Clients Table */}
       <ConnectedClientsTable clients={clients || []} isLoading={isLoadingClients} />
-
-      {/* Security Summary */}
-      <WifiSecuritySummary interfaces={interfaces || []} isLoading={isLoadingInterfaces} />
 
       {/* Wireless Interfaces List */}
       <WifiInterfaceList routerId={routerId} />

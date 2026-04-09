@@ -14,6 +14,12 @@ export interface SystemResource {
   /** CPU load percentage (0-100) */
   cpuLoad: number;
 
+  /** Number of CPU cores */
+  cpuCount?: number;
+
+  /** CPU frequency in MHz */
+  cpuFrequency?: number;
+
   /** Free memory in bytes */
   freeMemory: number;
 

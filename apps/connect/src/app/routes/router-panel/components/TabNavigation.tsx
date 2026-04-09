@@ -167,11 +167,11 @@ export const TabNavigation = React.memo(function TabNavigation() {
   }, []);
   return (
     <nav
-      className="border-border sticky top-0 z-30 border-b bg-white dark:bg-[#0a0a0a]"
+      className="bg-card border-border sticky top-0 z-30 border-b"
       role="navigation"
       aria-label="Router panel sections"
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-0.5 overflow-x-auto px-2 md:px-4">
+      <div className="mx-auto flex max-w-7xl items-center gap-0.5 overflow-x-auto px-page-mobile md:px-page-tablet lg:px-page-desktop">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.value;
@@ -188,9 +188,9 @@ export const TabNavigation = React.memo(function TabNavigation() {
               className={cn(
                 'flex cursor-pointer items-center gap-2 whitespace-nowrap px-3 py-4 text-sm font-medium transition-all duration-200 md:px-4',
                 'focus-visible:ring-ring border-b-2 border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                'hover:bg-muted hover:text-foreground rounded-t-md',
+                'hover:bg-muted hover:text-foreground',
                 isActive
-                  ? 'border-primary text-primary font-semibold'
+                  ? 'border-foreground text-foreground font-semibold'
                   : 'text-muted-foreground',
               )}
             >

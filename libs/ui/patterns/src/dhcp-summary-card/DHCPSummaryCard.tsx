@@ -25,7 +25,7 @@ import * as React from 'react';
 import { Link } from '@tanstack/react-router';
 import { Network, Users, ChevronRight, Loader2 } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@nasnet/ui/primitives';
+import { Card, CardContent, CardHeader, CardTitle, Button } from '@nasnet/ui/primitives';
 import { cn } from '@nasnet/ui/utils';
 
 /**
@@ -61,80 +61,59 @@ function DHCPSummaryCardComponent({
   linkTo = '/dhcp',
   className = '',
 }: DHCPSummaryCardProps) {
-  const content = (
+  return (
     <Card
-      className={cn(
-        'h-full transition-all duration-200',
-        className
-      )}
-      role={linkTo ? 'link' : 'region'}
+      className={cn('h-full', className)}
+      role="region"
       aria-label={`${serverName} summary card`}
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-lg',
-                'bg-info/10 dark:bg-info/20'
-              )}
-            >
-              <Network
-                className={cn('h-4 w-4', 'text-info')}
-                aria-hidden="true"
-              />
+            <div className="bg-info/10 dark:bg-info/20 flex h-8 w-8 items-center justify-center rounded-lg">
+              <Network className="text-info h-4 w-4" aria-hidden="true" />
             </div>
             <CardTitle className="text-base font-semibold">{serverName}</CardTitle>
           </div>
           {linkTo && (
-            <ChevronRight
-              className={cn('h-4 w-4', 'text-muted-foreground')}
-              aria-hidden="true"
-            />
+            <Link to={linkTo as '/'}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer rounded-full">
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </Link>
           )}
         </div>
       </CardHeader>
       <CardContent className="pt-0">
         {isLoading ?
-          <div
-            className="flex items-center justify-center py-4"
-            role="status"
-            aria-live="polite"
-            aria-label="Loading DHCP summary"
-          >
-            <Loader2
-              className={cn('h-6 w-6 animate-spin', 'text-muted-foreground')}
-              aria-hidden="true"
-            />
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" aria-hidden="true" />
+          </div>
+        : activeLeases === 0 ?
+          <div className="flex h-full flex-1 flex-col items-center justify-center py-10 text-center">
+            <Network className="text-muted-foreground mb-2 h-8 w-8 animate-pulse" />
+            <p className="text-muted-foreground text-sm">No active leases</p>
           </div>
         : <div className="space-y-3">
-            {/* Active Leases */}
             <div className="flex items-center gap-3">
-              <Users
-                className={cn('h-5 w-5', 'text-muted-foreground')}
-                aria-hidden="true"
-              />
+              <Users className="text-muted-foreground h-5 w-5" aria-hidden="true" />
               <div>
                 <p className="text-foreground text-2xl font-bold">
                   {activeLeases}
                   {totalCapacity && (
-                    <span className={cn('ml-1 text-sm font-normal', 'text-muted-foreground')}>
+                    <span className="text-muted-foreground ml-1 text-sm font-normal">
                       / {totalCapacity}
                     </span>
                   )}
                 </p>
-                <p className={cn('text-xs', 'text-muted-foreground')}>Active Leases</p>
+                <p className="text-muted-foreground text-xs">Active Leases</p>
               </div>
             </div>
 
-            {/* IP Range */}
             {ipRange && (
               <div className="border-border border-t pt-2">
-                <p className={cn('text-xs', 'text-muted-foreground')}>IP Range</p>
-                <p
-                  className={cn('truncate font-mono text-sm', 'text-foreground')}
-                  title={ipRange}
-                >
+                <p className="text-muted-foreground text-xs">IP Range</p>
+                <p className="text-foreground truncate font-mono text-sm" title={ipRange}>
                   {ipRange}
                 </p>
               </div>
@@ -144,20 +123,6 @@ function DHCPSummaryCardComponent({
       </CardContent>
     </Card>
   );
-
-  if (linkTo) {
-    // Use type assertion for dynamic link props
-    return (
-      <Link
-        to={linkTo as '/'}
-        className="block"
-      >
-        {content}
-      </Link>
-    );
-  }
-
-  return content;
 }
 
 DHCPSummaryCardComponent.displayName = 'DHCPSummaryCard';

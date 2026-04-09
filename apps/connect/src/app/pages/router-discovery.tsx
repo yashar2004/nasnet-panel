@@ -256,9 +256,9 @@ export const RouterDiscoveryPage = React.memo(function RouterDiscoveryPage() {
         <div className="brand-gradient-subtle rounded-card-lg border-border/30 mb-12 border px-6 py-12 text-center">
           <img src="/favicon.png" alt="NasNet" className="ring-primary/20 mx-auto mb-6 h-20 w-20 rounded-2xl shadow-lg ring-4" />
           <h1 className="font-display text-foreground mb-4 text-4xl font-bold">
-            {"Router Discovery"}
+            Nasnet Panel
           </h1>
-          <p className="text-muted-foreground text-lg">{"Discover and connect to MikroTik routers on your network"}</p>
+          <p className="text-muted-foreground text-lg">Enterprise free internet dashboard</p>
         </div>
 
         {/* View Mode Tabs */}

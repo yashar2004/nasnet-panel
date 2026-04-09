@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ApolloProvider } from '@nasnet/api-client/core';
 import { PlatformProvider } from '@nasnet/ui/layouts';
 import { AnimationProvider, ToastProvider } from '@nasnet/ui/patterns';
+import { TooltipProvider } from '@nasnet/ui/primitives';
 
 import { ThemeProvider } from './ThemeProvider';
 
@@ -51,7 +52,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <AnimationProvider>
           <ApolloProvider>
             <QueryClientProvider client={queryClient}>
-              <ToastProvider>{children}</ToastProvider>
+              <TooltipProvider>
+                <ToastProvider>{children}</ToastProvider>
+              </TooltipProvider>
             </QueryClientProvider>
           </ApolloProvider>
         </AnimationProvider>

@@ -1,163 +1,178 @@
-/**
- * Connected Clients Table Component
- * Displays WiFi clients connected to wireless interfaces
- */
-
 import React, { useMemo } from 'react';
 import { Signal, Clock, ArrowDown, ArrowUp } from 'lucide-react';
 import type { WirelessClient } from '@nasnet/core/types';
 import { formatBytes } from '@nasnet/core/utils';
-import { SectionHeader } from '../../network/components/SectionHeader';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@nasnet/ui/primitives';
+import { usePagination } from '../hooks/usePagination';
+import { PaginationControls } from './PaginationControls';
+
 interface ConnectedClientsTableProps {
   clients: WirelessClient[];
   isLoading?: boolean;
 }
-function getSignalIcon(signalDbm: number) {
-  if (signalDbm >= -50) return {
-    color: 'text-success',
-    bars: 4
-  };
-  if (signalDbm >= -60) return {
-    color: 'text-success',
-    bars: 3
-  };
-  if (signalDbm >= -70) return {
-    color: 'text-warning',
-    bars: 2
-  };
-  return {
-    color: 'text-error',
-    bars: 1
-  };
+
+function SignalBars({ signal }: { signal: number }) {
+  const bars =
+    signal >= -50 ? 4
+    : signal >= -60 ? 3
+    : signal >= -70 ? 2
+    : 1;
+  const color =
+    bars >= 3 ? 'bg-success'
+    : bars === 2 ? 'bg-warning'
+    : 'bg-error';
+
+  return (
+    <div className="flex h-4 items-end gap-0.5">
+      {[1, 2, 3, 4].map((bar) => (
+        <div
+          key={bar}
+          className={`w-1 rounded-sm ${bar <= bars ? color : 'bg-muted'}`}
+          style={{ height: `${bar * 25}%` }}
+        />
+      ))}
+    </div>
+  );
 }
-function SignalBars({
-  signal
-}: {
-  signal: number;
-}) {
-  const {
-    color,
-    bars
-  } = getSignalIcon(signal);
-  return <div className="flex h-4 items-end gap-0.5">
-      {[1, 2, 3, 4].map(bar => <div key={bar} className={`w-1 rounded-sm ${bar <= bars ? color : 'bg-muted'}`} style={{
-      height: `${bar * 25}%`
-    }} />)}
-    </div>;
-}
+
 export const ConnectedClientsTable = React.memo(function ConnectedClientsTable({
   clients,
-  isLoading
+  isLoading,
 }: ConnectedClientsTableProps) {
-  const sortedClients = useMemo(() => {
-    return [...clients].sort((a, b) => b.signalStrength - a.signalStrength);
-  }, [clients]);
+  const sortedClients = useMemo(
+    () => [...clients].sort((a, b) => b.signalStrength - a.signalStrength),
+    [clients]
+  );
+
+  const { page, totalPages, startIndex, endIndex, setPage } = usePagination({
+    totalItems: sortedClients.length,
+    pageSize: 10,
+  });
+
+  const paginatedClients = sortedClients.slice(startIndex, endIndex);
+
   if (isLoading) {
-    return <section>
-        <SectionHeader title={"Connected Clients"} />
-        <div className="bg-card rounded-card-sm border-border p-component-md animate-pulse border">
-          <div className="space-y-3">
-            {[1, 2, 3].map(i => <div key={i} className="bg-muted h-12 rounded" />)}
-          </div>
-        </div>
-      </section>;
+    return (
+      <section>
+        <Card variant="flat">
+          <CardHeader>
+            <CardTitle className="text-base">Connected Clients</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </CardContent>
+        </Card>
+      </section>
+    );
   }
+
   if (clients.length === 0) {
-    return <section>
-        <SectionHeader title={"Connected Clients"} />
-        <div className="bg-card rounded-card-sm border-border p-component-lg border text-center">
-          <Signal className="text-muted-foreground mx-auto mb-3 h-10 w-10" />
-          <p className="text-muted-foreground text-sm">{"No Clients Connected"}</p>
-        </div>
-      </section>;
+    return (
+      <section>
+        <Card variant="flat">
+          <CardHeader>
+            <CardTitle className="text-base">Connected Clients</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center py-10 text-center">
+            <Signal className="text-muted-foreground mb-2 h-8 w-8 animate-pulse" />
+            <p className="text-muted-foreground text-sm">No clients connected</p>
+          </CardContent>
+        </Card>
+      </section>
+    );
   }
-  return <section>
-      <SectionHeader title={"Connected Clients"} count={clients.length} />
-      <div className="bg-card rounded-card-sm border-border overflow-hidden border shadow-sm">
+
+  return (
+    <section>
+      <Card variant="flat">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base">Connected Clients</CardTitle>
+            <span className="text-muted-foreground text-sm tabular-nums">{clients.length} total</span>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
         {/* Desktop Table */}
-        <div className="hidden overflow-x-auto md:block">
-          <table className="w-full">
-            <thead>
-              <tr className="border-border border-b">
-                <th className="font-display text-muted-foreground p-component-md text-left text-xs font-medium uppercase tracking-wide">
-                  {"MAC Address"}
-                </th>
-                <th className="font-display text-muted-foreground p-component-md text-left text-xs font-medium uppercase tracking-wide">
-                  {"Interface"}
-                </th>
-                <th className="font-display text-muted-foreground p-component-md text-left text-xs font-medium uppercase tracking-wide">
-                  {"Signal"}
-                </th>
-                <th className="font-display text-muted-foreground p-component-md text-left text-xs font-medium uppercase tracking-wide">
-                  {"Rate"}
-                </th>
-                <th className="font-display text-muted-foreground p-component-md text-left text-xs font-medium uppercase tracking-wide">
-                  {"Traffic"}
-                </th>
-                <th className="font-display text-muted-foreground p-component-md text-left text-xs font-medium uppercase tracking-wide">
-                  {"Connected For"}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-border divide-y">
-              {sortedClients.map(client => <tr key={client.id} className="hover:bg-muted transition-colors">
-                  <td className="p-component-md">
-                    <span className="text-foreground font-mono text-sm">{client.macAddress}</span>
-                  </td>
-                  <td className="p-component-md">
-                    <span className="text-muted-foreground font-display text-sm">
-                      {client.interface}
-                    </span>
-                  </td>
-                  <td className="p-component-md">
+        <div className="hidden md:block">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead>MAC Address</TableHead>
+                <TableHead>Interface</TableHead>
+                <TableHead>Signal</TableHead>
+                <TableHead>Rate</TableHead>
+                <TableHead>Traffic</TableHead>
+                <TableHead>Connected For</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedClients.map((client) => (
+                <TableRow key={client.id}>
+                  <TableCell className="font-mono text-sm">{client.macAddress}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm">{client.interface}</TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <SignalBars signal={client.signalStrength} />
                       <span className="text-muted-foreground font-mono text-sm">
                         {client.signalStrength} dBm
                       </span>
                     </div>
-                  </td>
-                  <td className="p-component-md">
+                  </TableCell>
+                  <TableCell>
                     <div className="text-muted-foreground font-mono text-sm">
                       <span className="text-success">↓</span> {client.rxRate} Mbps
-                      <span className="text-warning ml-2">↑</span> {client.txRate} Mbps
+                      <span className="text-primary ml-2">↑</span> {client.txRate} Mbps
                     </div>
-                  </td>
-                  <td className="p-component-md">
+                  </TableCell>
+                  <TableCell>
                     <div className="text-muted-foreground font-mono text-sm">
                       <span className="text-success">↓</span> {formatBytes(client.rxBytes)}
-                      <span className="text-warning ml-2">↑</span> {formatBytes(client.txBytes)}
+                      <span className="text-primary ml-2">↑</span> {formatBytes(client.txBytes)}
                     </div>
-                  </td>
-                  <td className="p-component-md">
+                  </TableCell>
+                  <TableCell>
                     <div className="text-muted-foreground flex items-center gap-1 font-mono text-sm">
                       <Clock className="h-3.5 w-3.5" />
                       {client.uptime}
                     </div>
-                  </td>
-                </tr>)}
-            </tbody>
-          </table>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
 
         {/* Mobile Cards */}
         <div className="divide-border divide-y md:hidden">
-          {sortedClients.map(client => <div key={client.id} className="p-component-md space-y-2">
+          {paginatedClients.map((client) => (
+            <div key={client.id} className="space-y-2 p-4">
               <div className="flex items-center justify-between">
-                <span className="text-foreground font-display font-mono text-sm">
-                  {client.macAddress}
-                </span>
+                <span className="text-foreground font-mono text-sm">{client.macAddress}</span>
                 <SignalBars signal={client.signalStrength} />
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground font-display">{client.interface}</span>
+                <span className="text-muted-foreground">{client.interface}</span>
                 <span className="text-muted-foreground font-mono">{client.signalStrength} dBm</span>
               </div>
               <div className="text-muted-foreground flex items-center justify-between font-mono text-xs">
                 <div className="flex items-center gap-2">
                   <ArrowDown className="text-success h-3 w-3" />
                   {formatBytes(client.rxBytes)}
-                  <ArrowUp className="text-warning h-3 w-3" />
+                  <ArrowUp className="text-primary h-3 w-3" />
                   {formatBytes(client.txBytes)}
                 </div>
                 <div className="flex items-center gap-1">
@@ -165,9 +180,15 @@ export const ConnectedClientsTable = React.memo(function ConnectedClientsTable({
                   {client.uptime}
                 </div>
               </div>
-            </div>)}
+            </div>
+          ))}
         </div>
-      </div>
-    </section>;
+
+        <PaginationControls page={page} totalPages={totalPages} onPageChange={setPage} />
+      </CardContent>
+    </Card>
+    </section>
+  );
 });
+
 ConnectedClientsTable.displayName = 'ConnectedClientsTable';

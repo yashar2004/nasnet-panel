@@ -193,9 +193,9 @@ export const OverviewTab = React.memo(function OverviewTab() {
     dhcpLeases?.filter((l) => l.status === 'bound' || !l.status)?.length || 0;
 
   const getDhcpPoolRange = () => {
-    if (!dhcpPools || dhcpPools.length === 0) return 'N/A';
+    if (!dhcpPools || dhcpPools.length === 0) return undefined;
     const ranges = dhcpPools[0].ranges;
-    if (!ranges) return 'N/A';
+    if (!ranges) return undefined;
     return Array.isArray(ranges) ? ranges.join(', ') : String(ranges);
   };
 
@@ -247,6 +247,11 @@ export const OverviewTab = React.memo(function OverviewTab() {
     : status === 'warning' ? 'Warning'
     : 'Critical';
 
+  const statusProgressClass = (status: string) =>
+    status === 'healthy' ? '[&>div]:bg-primary'
+    : status === 'warning' ? '[&>div]:bg-warning'
+    : '[&>div]:bg-error';
+
   return (
     <div className="animate-fade-in-up px-page-mobile md:px-page-tablet lg:px-page-desktop py-4 md:py-6 mx-auto max-w-7xl space-y-6 pb-10">
 
@@ -276,7 +281,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 sm:justify-end">
               <div className="flex items-center gap-1.5">
                 <Clock className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
-                {isLoading ? (
+                {!data && isLoading ? (
                   <Skeleton className="h-4 w-16" />
                 ) : (
                   <span className="text-foreground text-sm font-medium tabular-nums">
@@ -290,7 +295,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
 
               <div className="flex items-center gap-1.5">
                 <Users className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
-                {dhcpLeasesLoading ? (
+                {!dhcpLeases && dhcpLeasesLoading ? (
                   <Skeleton className="h-4 w-6" />
                 ) : (
                   <span className="text-foreground text-sm font-medium tabular-nums">
@@ -304,7 +309,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
 
               <div className="flex items-center gap-1.5">
                 <Activity className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
-                {vpnLoading ? (
+                {!pppActive && vpnLoading ? (
                   <Skeleton className="h-4 w-6" />
                 ) : (
                   <span
@@ -358,10 +363,11 @@ export const OverviewTab = React.memo(function OverviewTab() {
                 <Progress
                   value={resourceData?.cpuLoad ?? 0}
                   size="sm"
+                  className={statusProgressClass(cpuStatus)}
                   aria-label={`CPU usage ${Math.round(resourceData?.cpuLoad ?? 0)}%`}
                 />
                 <p className="text-muted-foreground text-center text-xs">
-                  {resourceLoading ? '—' : `${Math.round(resourceData?.cpuLoad ?? 0)}% used`}
+                  {resourceLoading ? '—' : `${resourceData?.cpuCount ?? 1} core${(resourceData?.cpuCount ?? 1) > 1 ? 's' : ''} · ${resourceData?.cpuFrequency ?? 0} MHz`}
                 </p>
               </div>
             </CardContent>
@@ -385,7 +391,6 @@ export const OverviewTab = React.memo(function OverviewTab() {
                   label=""
                   value={memoryPercentage}
                   status={memoryStatus}
-                  subtitle={memorySubtitle}
                   isLoading={resourceLoading}
                 />
               </div>
@@ -393,6 +398,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
                 <Progress
                   value={memoryPercentage}
                   size="sm"
+                  className={statusProgressClass(memoryStatus)}
                   aria-label={`Memory usage ${Math.round(memoryPercentage)}%`}
                 />
                 <p className="text-muted-foreground text-center text-xs">
@@ -420,7 +426,6 @@ export const OverviewTab = React.memo(function OverviewTab() {
                   label=""
                   value={diskPercentage}
                   status={diskStatus}
-                  subtitle={diskSubtitle}
                   isLoading={resourceLoading}
                 />
               </div>
@@ -428,6 +433,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
                 <Progress
                   value={diskPercentage}
                   size="sm"
+                  className={statusProgressClass(diskStatus)}
                   aria-label={`Disk usage ${Math.round(diskPercentage)}%`}
                 />
                 <p className="text-muted-foreground text-center text-xs">
@@ -454,12 +460,14 @@ export const OverviewTab = React.memo(function OverviewTab() {
             serverName={dhcpServers?.[0]?.name || 'Default DHCP Server'}
             isLoading={dhcpLeasesLoading}
             linkTo="dhcp"
+            className="shadow-none"
           />
           <TrafficChart
             title={`Network Traffic${primaryInterface ? ` (${primaryInterface.name})` : ''}`}
             data={trafficData}
             showPlaceholder={false}
             height={140}
+            className="shadow-none"
           />
           <VPNClientsSummary
             connectedCount={vpnConnectedCount}
@@ -467,6 +475,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
             isLoading={vpnLoading}
             linkTo="vpn"
             maxVisible={3}
+            className="shadow-none"
           />
         </div>
       </section>
@@ -481,7 +490,7 @@ export const OverviewTab = React.memo(function OverviewTab() {
         </h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <SystemInfoCard data={data} isLoading={isLoading} error={error} onRetry={() => refetch()} />
-          <HardwareCard data={hardwareData} isLoading={hardwareLoading} error={hardwareError} />
+          <HardwareCard data={hardwareData} systemResource={resourceData} isLoading={hardwareLoading} error={hardwareError} />
         </div>
       </section>
     </div>

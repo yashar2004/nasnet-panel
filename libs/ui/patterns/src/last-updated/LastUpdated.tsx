@@ -61,7 +61,7 @@ export const LastUpdated = React.memo(function LastUpdated({
       )}
     >
       <Clock className="h-3.5 w-3.5" />
-      <span className="font-medium">{relativeTime}</span>
+      <span className="font-medium tabular-nums">{relativeTime}</span>
     </div>
   );
 });

@@ -15,21 +15,21 @@ function formatRelativeTime(timestamp: Date): string {
   const diffMs = now.getTime() - timestamp.getTime();
   const diffSeconds = Math.floor(diffMs / 1000);
 
-  if (diffSeconds < 5) {
-    return 'Updated just now';
+  if (diffSeconds < 10) {
+    return 'Just now';
   }
 
   if (diffSeconds < 60) {
-    return `Updated ${diffSeconds} second${diffSeconds === 1 ? '' : 's'} ago`;
+    return `${diffSeconds}s ago`;
   }
 
   const diffMinutes = Math.floor(diffSeconds / 60);
   if (diffMinutes < 60) {
-    return `Updated ${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+    return `${diffMinutes}m ago`;
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
-  return `Updated ${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+  return `${diffHours}h ago`;
 }
 
 /**
@@ -59,10 +59,10 @@ export function useRelativeTime(timestamp: Date | null | undefined): string {
     // Initial update
     setRelativeTime(formatRelativeTime(timestamp));
 
-    // Update every second
+    // Update every 10 seconds to reduce re-renders
     const interval = setInterval(() => {
       setRelativeTime(formatRelativeTime(timestamp));
-    }, 1000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [timestamp]);

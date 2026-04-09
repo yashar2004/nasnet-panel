@@ -1,175 +1,155 @@
-/**
- * WiFi Status Hero Component
- * Dashboard Pro style stats grid showing WiFi overview metrics
- */
-
 import React, { useMemo } from 'react';
 import { Wifi, Users, Signal, Radio } from 'lucide-react';
 import type { WirelessInterface, WirelessClient } from '@nasnet/core/types';
+import {
+  Card,
+  CardContent,
+  Badge,
+  Progress,
+  Skeleton,
+} from '@nasnet/ui/primitives';
+
 interface WifiStatusHeroProps {
   interfaces: WirelessInterface[];
   clients: WirelessClient[];
   isLoading?: boolean;
 }
-function getSignalQuality(signalDbm: number): {
-  label: string;
-  color: string;
-  bgColor: string;
-} {
-  if (signalDbm >= -50) {
-    return {
-      label: 'Excellent',
-      color: 'text-success',
-      bgColor: 'bg-success'
-    };
-  }
-  if (signalDbm >= -60) {
-    return {
-      label: 'Good',
-      color: 'text-success',
-      bgColor: 'bg-success'
-    };
-  }
-  if (signalDbm >= -70) {
-    return {
-      label: 'Fair',
-      color: 'text-warning',
-      bgColor: 'bg-warning'
-    };
-  }
-  return {
-    label: 'Weak',
-    color: 'text-error',
-    bgColor: 'bg-error'
-  };
+
+function getSignalQuality(signalDbm: number) {
+  if (signalDbm >= -50) return { label: 'Excellent', progressClass: '[&>div]:bg-success', textClass: 'text-success' };
+  if (signalDbm >= -60) return { label: 'Good', progressClass: '[&>div]:bg-success', textClass: 'text-success' };
+  if (signalDbm >= -70) return { label: 'Fair', progressClass: '[&>div]:bg-warning', textClass: 'text-warning' };
+  return { label: 'Weak', progressClass: '[&>div]:bg-error', textClass: 'text-error' };
 }
+
 function signalToPercent(signalDbm: number): number {
-  const minDbm = -100;
-  const maxDbm = -30;
-  const clamped = Math.max(minDbm, Math.min(maxDbm, signalDbm));
-  return Math.round((clamped - minDbm) / (maxDbm - minDbm) * 100);
+  const clamped = Math.max(-100, Math.min(-30, signalDbm));
+  return Math.round(((clamped + 100) / 70) * 100);
 }
+
 export const WifiStatusHero = React.memo(function WifiStatusHero({
   interfaces,
   clients,
-  isLoading
+  isLoading,
 }: WifiStatusHeroProps) {
   const totalClients = clients.length;
-  const activeInterfaces = useMemo(() => {
-    return interfaces.filter(i => !i.disabled && i.running);
-  }, [interfaces]);
-  const activePercent = interfaces.length > 0 ? Math.round(activeInterfaces.length / interfaces.length * 100) : 0;
+
+  const activeInterfaces = useMemo(
+    () => interfaces.filter((i) => !i.disabled && i.running),
+    [interfaces]
+  );
+
+  const activePercent =
+    interfaces.length > 0 ? Math.round((activeInterfaces.length / interfaces.length) * 100) : 0;
+
   const avgSignal = useMemo(() => {
     if (clients.length === 0) return -100;
-    const sum = clients.reduce((acc, c) => acc + c.signalStrength, 0);
-    return Math.round(sum / clients.length);
+    return Math.round(clients.reduce((acc, c) => acc + c.signalStrength, 0) / clients.length);
   }, [clients]);
+
   const signalQuality = getSignalQuality(avgSignal);
   const signalPercent = signalToPercent(avgSignal);
-  const bandCounts = useMemo(() => {
-    return interfaces.reduce((acc, iface) => {
-      if (iface.band === '2.4GHz') acc['2.4GHz']++;else if (iface.band === '5GHz') acc['5GHz']++;else if (iface.band === '6GHz') acc['6GHz']++;
-      return acc;
-    }, {
-      '2.4GHz': 0,
-      '5GHz': 0,
-      '6GHz': 0
-    });
-  }, [interfaces]);
+
+  const bandCounts = useMemo(
+    () =>
+      interfaces.reduce(
+        (acc, i) => {
+          if (i.band === '2.4GHz') acc['2.4GHz']++;
+          else if (i.band === '5GHz') acc['5GHz']++;
+          else if (i.band === '6GHz') acc['6GHz']++;
+          return acc;
+        },
+        { '2.4GHz': 0, '5GHz': 0, '6GHz': 0 }
+      ),
+    [interfaces]
+  );
+
   if (isLoading) {
-    return <div className="gap-component-sm md:gap-component-md grid animate-pulse grid-cols-2 md:grid-cols-4" role="status" aria-label="Loading WiFi status">
-        {[1, 2, 3, 4].map(i => <div key={i} className="bg-muted rounded-card-sm p-component-sm md:p-component-md">
-            <div className="bg-muted-foreground/20 mb-component-sm h-4 w-12 rounded" />
-            <div className="bg-muted-foreground/20 mb-component-xs h-6 w-8 rounded" />
-            <div className="bg-muted-foreground/20 mt-component-sm h-1.5 rounded-full" />
-          </div>)}
-      </div>;
-  }
-  return <div className="gap-component-sm md:gap-component-md category-hero-wifi rounded-card-lg p-component-md md:p-component-lg grid grid-cols-2 shadow-md md:grid-cols-4">
-      {/* Connected Clients */}
-      <div className="bg-card rounded-card-sm p-component-sm md:p-component-md border-border border shadow-sm">
-        <div className="gap-component-xs mb-component-xs flex items-center">
-          <Users className="text-info h-3.5 w-3.5" aria-hidden="true" />
-          <p className="text-muted-foreground text-xs uppercase tracking-wide">
-            {"Clients"}
-          </p>
-        </div>
-        <p className="font-display text-foreground font-mono text-xl font-bold md:text-2xl">
-          {totalClients}
-        </p>
-        <p className="text-muted-foreground mt-component-xs text-xs">
-          {"Connected devices"}
-        </p>
+    return (
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i} variant="flat">
+            <CardContent className="p-4">
+              <Skeleton className="mb-2 h-4 w-12" />
+              <Skeleton className="mb-2 h-7 w-10" />
+              <Skeleton className="h-1.5 w-full" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {/* Connected Clients */}
+      <Card variant="flat">
+        <CardContent className="p-4">
+          <div className="mb-1 flex items-center gap-1.5">
+            <Users className="text-info h-3.5 w-3.5" />
+            <span className="text-muted-foreground text-xs uppercase tracking-wide">Clients</span>
+          </div>
+          <p className="text-foreground text-2xl font-bold tabular-nums">{totalClients}</p>
+          <p className="text-muted-foreground mt-1 text-xs">Connected devices</p>
+        </CardContent>
+      </Card>
 
       {/* Active Interfaces */}
-      <div className="bg-card rounded-card-sm p-component-sm md:p-component-md border-border border shadow-sm">
-        <div className="gap-component-xs mb-component-xs flex items-center">
-          <Wifi className="text-success h-3.5 w-3.5" aria-hidden="true" />
-          <p className="text-muted-foreground text-xs uppercase tracking-wide">
-            {"Active"}
+      <Card variant="flat">
+        <CardContent className="p-4">
+          <div className="mb-1 flex items-center gap-1.5">
+            <Wifi className="text-success h-3.5 w-3.5" />
+            <span className="text-muted-foreground text-xs uppercase tracking-wide">Active</span>
+          </div>
+          <p className="text-foreground text-2xl font-bold tabular-nums">
+            {activeInterfaces.length}
+            <span className="text-muted-foreground ml-1 text-sm font-normal">/{interfaces.length}</span>
           </p>
-        </div>
-        <p className="font-display text-foreground text-xl font-bold md:text-2xl">
-          {activeInterfaces.length}
-          <span className="text-muted-foreground ml-component-sm font-mono text-sm font-normal">
-            /{interfaces.length}
-          </span>
-        </p>
-        <div className="bg-muted mt-component-sm h-1.5 w-full rounded-full" role="progressbar" aria-valuenow={activePercent} aria-valuemin={0} aria-valuemax={100} aria-label="Active interfaces">
-          <div className="bg-success h-1.5 rounded-full transition-all duration-300" style={{
-          width: `${activePercent}%`
-        }} />
-        </div>
-      </div>
+          <Progress value={activePercent} size="sm" className="mt-2 [&>div]:bg-success" />
+        </CardContent>
+      </Card>
 
       {/* Signal Quality */}
-      <div className="bg-card rounded-card-sm p-component-sm md:p-component-md border-border border shadow-sm">
-        <div className="gap-component-xs mb-component-xs flex items-center">
-          <Signal className="text-warning h-3.5 w-3.5" aria-hidden="true" />
-          <p className="text-muted-foreground text-xs uppercase tracking-wide">
-            {"Signal"}
+      <Card variant="flat">
+        <CardContent className="p-4">
+          <div className="mb-1 flex items-center gap-1.5">
+            <Signal className="text-warning h-3.5 w-3.5" />
+            <span className="text-muted-foreground text-xs uppercase tracking-wide">Signal</span>
+          </div>
+          <p className={`text-2xl font-bold tabular-nums ${signalQuality.textClass}`}>
+            {clients.length > 0 ? `${avgSignal} dBm` : '—'}
           </p>
-        </div>
-        <p className={`font-mono text-xl font-bold md:text-2xl ${signalQuality.color}`}>
-          {clients.length > 0 ? `${avgSignal} dBm` : '—'}
-        </p>
-        {clients.length > 0 ? <>
-            <div className="bg-muted mt-component-sm h-1.5 w-full rounded-full" role="progressbar" aria-valuenow={signalPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Signal strength">
-              <div className={`${signalQuality.bgColor} h-1.5 rounded-full transition-all duration-300`} style={{
-            width: `${signalPercent}%`
-          }} />
-            </div>
-            <p className={`mt-component-xs text-xs ${signalQuality.color}`}>
-              {signalQuality.label}
-            </p>
-          </> : <p className="text-muted-foreground mt-component-xs text-xs">{"No clients"}</p>}
-      </div>
+          {clients.length > 0 ? (
+            <>
+              <Progress value={signalPercent} size="sm" className={`mt-2 ${signalQuality.progressClass}`} />
+              <p className={`mt-1 text-xs ${signalQuality.textClass}`}>{signalQuality.label}</p>
+            </>
+          ) : (
+            <p className="text-muted-foreground mt-1 text-xs">No clients</p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Frequency Bands */}
-      <div className="bg-card rounded-card-sm p-component-sm md:p-component-md border-border border shadow-sm">
-        <div className="gap-component-xs mb-component-xs flex items-center">
-          <Radio className="text-info h-3.5 w-3.5" aria-hidden="true" />
-          <p className="text-muted-foreground text-xs uppercase tracking-wide">
-            {"Bands"}
-          </p>
-        </div>
-        <div className="gap-component-xs mt-component-xs flex flex-wrap">
-          {bandCounts['2.4GHz'] > 0 && <span className="px-component-xs py-component-xs bg-info/10 text-info rounded-md font-mono text-xs font-medium">
-              2.4G
-            </span>}
-          {bandCounts['5GHz'] > 0 && <span className="px-component-xs py-component-xs bg-warning/10 text-warning rounded-md font-mono text-xs font-medium">
-              5G
-            </span>}
-          {bandCounts['6GHz'] > 0 && <span className="px-component-xs py-component-xs bg-error/10 text-error rounded-md font-mono text-xs font-medium">
-              6G
-            </span>}
-          {interfaces.length === 0 && <span className="text-muted-foreground text-xs">{"No interfaces"}</span>}
-        </div>
-        <p className="text-muted-foreground mt-component-xs text-xs">
-          {"Interface count"}
-        </p>
-      </div>
-    </div>;
+      <Card variant="flat">
+        <CardContent className="p-4">
+          <div className="mb-1 flex items-center gap-1.5">
+            <Radio className="text-info h-3.5 w-3.5" />
+            <span className="text-muted-foreground text-xs uppercase tracking-wide">Bands</span>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {bandCounts['2.4GHz'] > 0 && <Badge variant="info">2.4G</Badge>}
+            {bandCounts['5GHz'] > 0 && <Badge variant="warning">5G</Badge>}
+            {bandCounts['6GHz'] > 0 && <Badge variant="error">6G</Badge>}
+            {interfaces.length === 0 && (
+              <span className="text-muted-foreground text-xs">No interfaces</span>
+            )}
+          </div>
+          <p className="text-muted-foreground mt-1 text-xs">{interfaces.length} interface{interfaces.length !== 1 ? 's' : ''}</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
 });
+
 WifiStatusHero.displayName = 'WifiStatusHero';

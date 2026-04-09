@@ -80,7 +80,7 @@ function WirelessInterfaceCardComponent(
       tabIndex={0}
       aria-label={`Wireless interface ${iface.name}${iface.ssid ? `, SSID ${iface.ssid}` : ''}`}
       className={cn(
-        'rounded-card-lg focus-visible:ring-ring cursor-pointer transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        'rounded-card-lg focus-visible:ring-ring cursor-pointer shadow-none transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         className
       )}
       onClick={handleClick}

@@ -79,7 +79,7 @@ export function useRouterInfo(routerIp: string): UseQueryResult<SystemInfo, Erro
         identity: identity.name,
         model: resource.boardName,
         routerOsVersion: resource.version,
-        cpuArchitecture: resource.architecture,
+        cpuArchitecture: (resource as any).architectureName || resource.architecture,
         uptime: resource.uptime,
       };
 

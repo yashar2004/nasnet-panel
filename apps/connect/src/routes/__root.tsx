@@ -1,4 +1,6 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+declare const APP_VERSION: string;
+
+import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useAlertNotifications } from '@nasnet/features/alerts';
 import { ResponsiveShell } from '@nasnet/ui/layouts';
@@ -30,9 +32,13 @@ function RootInner() {
 
   // Enable alert notifications subscription with toast + sound playback
   useAlertNotifications();
+
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isMainRoute = pathname === '/';
+
   return (
     <ResponsiveShell
-      header={<AppHeader />}
+      header={isMainRoute ? undefined : <AppHeader />}
       banner={<ConnectionBanner />}
     >
       {/* Skip to main content link for keyboard/screen reader users */}
@@ -44,10 +50,18 @@ function RootInner() {
       </a>
       <main
         id="main-content"
-        className="animate-fade-in-up px-page-mobile md:px-page-tablet lg:px-page-desktop py-6"
+        className="animate-fade-in-up px-page-mobile md:px-page-tablet lg:px-page-desktop flex-1 py-6"
       >
         <Outlet />
       </main>
+      <footer className="border-border border-t py-4 text-center text-xs text-muted-foreground">
+        <p>
+          &copy; {new Date().getFullYear()} Nasnet Panel v{APP_VERSION}
+          {import.meta.env.DEV && (
+            <span className="ml-2 rounded bg-warning/20 px-1.5 py-0.5 font-medium text-warning">DEV</span>
+          )}
+        </p>
+      </footer>
       <Toaster />
       {/* Command Palette - opens with Cmd+K or via SearchFAB on mobile */}
       <CommandPalette />

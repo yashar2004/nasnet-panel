@@ -59,6 +59,10 @@ function designTokensHMR(): Plugin {
   };
 }
 
+import { readFileSync } from 'fs';
+
+const pkg = JSON.parse(readFileSync(resolve(import.meta.dirname, '../../package.json'), 'utf-8'));
+
 export default defineConfig(({ mode }) => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/connect',
@@ -120,6 +124,9 @@ export default defineConfig(({ mode }) => ({
       ),
       '@nasnet/state/stores': resolve(import.meta.dirname, '../../libs/state/stores/src'),
     },
+  },
+  define: {
+    APP_VERSION: JSON.stringify(pkg.version),
   },
   server: {
     port: 5173,

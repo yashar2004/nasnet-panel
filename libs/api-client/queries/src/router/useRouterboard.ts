@@ -13,11 +13,17 @@ import { routerKeys } from './useRouterInfo';
  * RouterOS routerboard response format
  */
 interface RouterOSRouterboardResponse {
-  'serial-number'?: string;
-  'current-firmware'?: string;
-  'factory-firmware'?: string;
-  model?: string;
-  revision?: string;
+  // After camelCase conversion by makeRouterOSRequest:
+  serialNumber?: string;       // from serial-number
+  currentFirmware?: string;    // from current-firmware
+  factoryFirmware?: string;    // from factory-firmware
+  upgradeFirmware?: string;    // from upgrade-firmware
+  model?: string;              // from model
+  boardName?: string;          // from board-name (alternative to model)
+  revision?: string;           // from revision
+  firmwareType?: string;       // from firmware-type
+  routerboard?: string;        // from routerboard ("true"/"false")
+  [key: string]: unknown;      // catch any other fields
 }
 
 /**
@@ -46,12 +52,25 @@ async function fetchRouterboard(routerIp: string): Promise<RouterboardInfo | nul
     return null;
   }
 
+  const d = result.data;
+
+  const serialNumber = (d.serialNumber as string) || '';
+  const currentFirmware = (d.currentFirmware as string) || (d.upgradeFirmware as string) || '';
+  const factoryFirmware = (d.factoryFirmware as string) || '';
+  const model = (d.model as string) || (d.boardName as string) || '';
+  const revision = (d.revision as string) || (d.firmwareType as string) || '';
+
+  // If no meaningful data, return null so fallback can show system resource info
+  if (!serialNumber && !currentFirmware && !model) {
+    return null;
+  }
+
   return {
-    serialNumber: result.data['serial-number'] || 'N/A',
-    currentFirmware: result.data['current-firmware'] || 'N/A',
-    factoryFirmware: result.data['factory-firmware'] || 'N/A',
-    model: result.data.model || 'N/A',
-    revision: result.data.revision || 'N/A',
+    serialNumber: serialNumber || 'N/A',
+    currentFirmware: currentFirmware || 'N/A',
+    factoryFirmware: factoryFirmware || 'N/A',
+    model: model || 'N/A',
+    revision: revision || 'N/A',
   };
 }
 
