@@ -74,19 +74,21 @@ const tabs: TabDefinition[] = [{
   icon: ScrollText,
   ariaLabel: 'System logs',
   preload: preloadLogsTab
-}, {
-  value: 'plugins',
-  label: 'Store',
-  icon: Store,
-  ariaLabel: 'Plugin store',
-  preload: preloadPluginStoreTab
-}, {
-  value: 'services',
-  label: 'Services',
-  mobileLabel: 'Svc',
-  icon: Boxes,
-  ariaLabel: 'Service management'
-}];
+}
+// }, {
+//   value: 'plugins',
+//   label: 'Store',
+//   icon: Store,
+//   ariaLabel: 'Plugin store',
+//   preload: preloadPluginStoreTab
+// }, {
+//   value: 'services',
+//   label: 'Services',
+//   mobileLabel: 'Svc',
+//   icon: Boxes,
+//   ariaLabel: 'Service management'
+// }
+];
 
 /**
  * Tab Navigation Component
