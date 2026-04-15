@@ -6,10 +6,12 @@
 
 import * as React from 'react';
 
-import { ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import type { LogEntry, LogSeverity } from '@nasnet/core/types';
-import { cn, Button } from '@nasnet/ui/primitives';
+import { Badge, Button, cn } from '@nasnet/ui/primitives';
+
+import { severityToBadgeVariant } from '../log-entry';
 
 export interface LogStatsProps {
   /**
@@ -69,30 +71,11 @@ function computeStats(logs: LogEntry[]): SeverityStats[] {
 }
 
 /**
- * Format relative time
- */
-function formatRelativeTime(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-
-  if (seconds < 5) return 'just now';
-  if (seconds < 60) return `${seconds}s ago`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  return `${Math.floor(seconds / 3600)}h ago`;
-}
-
-/**
  * LogStats Component
  */
-export function LogStats({ logs, lastUpdated, isLoading, className }: LogStatsProps) {
+export function LogStats({ logs, className }: LogStatsProps) {
   const [isExpanded, setIsExpanded] = React.useState(true);
-  const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
   const stats = React.useMemo(() => computeStats(logs), [logs]);
-
-  // Update relative time every 10 seconds
-  React.useEffect(() => {
-    const interval = setInterval(forceUpdate, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
   const nonZeroStats = stats.filter((s) => s.count > 0);
 
@@ -110,30 +93,22 @@ export function LogStats({ logs, lastUpdated, isLoading, className }: LogStatsPr
           {/* Severity badges - compact */}
           <div className="hidden items-center gap-2 sm:flex">
             {nonZeroStats.map((stat) => (
-              <div
+              <Badge
                 key={stat.severity}
-                className={cn(
-                  'flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium',
-                  stat.severity === 'critical' || stat.severity === 'error' ?
-                    'bg-error/10 text-error'
-                  : stat.severity === 'warning' ? 'bg-warning/10 text-warning'
-                  : 'text-muted-foreground bg-slate-100 dark:bg-slate-800'
-                )}
+                variant={severityToBadgeVariant(stat.severity)}
+                className="gap-1.5"
               >
-                <span className={cn('h-2 w-2 rounded-full', stat.color)} />
+                <span
+                  className={cn('inline-block shrink-0', stat.color)}
+                  style={{ width: 8, height: 8, borderRadius: 9999 }}
+                  aria-hidden="true"
+                />
                 <span className="capitalize">{stat.severity}</span>
                 <span className="tabular-nums">{stat.count}</span>
-              </div>
+              </Badge>
             ))}
           </div>
 
-          {/* Last updated */}
-          {lastUpdated && (
-            <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-              <RefreshCw className={cn('h-3 w-3', isLoading && 'animate-spin')} />
-              <span>Updated {formatRelativeTime(lastUpdated)}</span>
-            </div>
-          )}
         </div>
 
         {/* Expand/collapse button */}
@@ -178,7 +153,11 @@ export function LogStats({ logs, lastUpdated, isLoading, className }: LogStatsPr
                 key={stat.severity}
                 className="text-muted-foreground flex items-center gap-1 text-xs"
               >
-                <span className={cn('h-2 w-2 rounded-full', stat.color)} />
+                <span
+                  className={cn('inline-block shrink-0', stat.color)}
+                  style={{ width: 8, height: 8, borderRadius: 9999 }}
+                  aria-hidden="true"
+                />
                 <span className="capitalize">{stat.severity}:</span>
                 <span className="tabular-nums">{stat.count}</span>
               </div>

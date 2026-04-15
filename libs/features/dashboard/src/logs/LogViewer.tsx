@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import { AlertCircle, List, Layers, Pin, RefreshCw } from 'lucide-react';
+import { AlertCircle, ChevronLeft, ChevronRight, List, Layers, Pin, RefreshCw } from 'lucide-react';
 import { useSystemLogs } from '@nasnet/api-client/queries';
 import { useConnectionStore } from '@nasnet/state/stores';
 import {
@@ -199,29 +199,37 @@ export const LogViewer = React.memo(function LogViewer({ className, limit = 100 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Get logs to display based on view mode
+  // Get logs to display based on view mode (sorted newest first)
   const logsToDisplay = React.useMemo(() => {
-    if (viewMode === 'bookmarked') {
-      return bookmarkedLogs;
-    }
-    return filteredLogs;
+    const source = viewMode === 'bookmarked' ? bookmarkedLogs : filteredLogs;
+    return [...source].sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
   }, [viewMode, filteredLogs, bookmarkedLogs]);
 
-  // Navigation for detail panel
-  const currentEntryIndex =
-    selectedEntry ? logsToDisplay.findIndex((l) => l.id === selectedEntry.id) : -1;
+  // Pagination (flat + bookmarked views)
+  const PAGE_SIZE = 25;
+  const [page, setPage] = React.useState(1);
+  const totalPages = Math.max(1, Math.ceil(logsToDisplay.length / PAGE_SIZE));
+  // Clamp inline so slicing never yields an empty window while React
+  // catches up from a filter change that shrank the result set.
+  const effectivePage = Math.min(Math.max(1, page), totalPages);
 
-  const handlePrevious = () => {
-    if (currentEntryIndex > 0) {
-      setSelectedEntry(logsToDisplay[currentEntryIndex - 1]);
-    }
-  };
+  // Reset to page 1 when filters, search, or view mode change the result set
+  React.useEffect(() => {
+    setPage(1);
+  }, [searchTerm, selectedTopics, selectedSeverities, viewMode]);
 
-  const handleNext = () => {
-    if (currentEntryIndex < logsToDisplay.length - 1) {
-      setSelectedEntry(logsToDisplay[currentEntryIndex + 1]);
-    }
-  };
+  // Keep state in sync with clamp so the UI and state don't drift
+  React.useEffect(() => {
+    if (page !== effectivePage) setPage(effectivePage);
+  }, [page, effectivePage]);
+
+  const pagedLogs = React.useMemo(() => {
+    if (viewMode === 'grouped') return logsToDisplay;
+    const start = (effectivePage - 1) * PAGE_SIZE;
+    return logsToDisplay.slice(start, start + PAGE_SIZE);
+  }, [logsToDisplay, effectivePage, viewMode]);
 
   // Get related entries for detail panel
   const relatedEntries = React.useMemo(() => {
@@ -348,10 +356,11 @@ export const LogViewer = React.memo(function LogViewer({ className, limit = 100 
 
       {/* Logs Display */}
       {!isLoading && !isError && (
-        <div className="relative min-h-0 flex-1">
+        <div className="flex min-h-0 flex-1 flex-col">
+         <div className="relative min-h-0 flex-1">
           <div
             ref={scrollContainerRef}
-            className="bg-card absolute inset-0 overflow-y-auto rounded-lg border"
+            className="absolute inset-0 overflow-y-auto"
           >
             {logsToDisplay.length === 0 ?
               <div className="text-muted-foreground p-component-xl gap-component-sm flex h-full flex-col items-center justify-center">
@@ -391,7 +400,7 @@ export const LogViewer = React.memo(function LogViewer({ className, limit = 100 
                 />
               </div>
             : <div className="divide-border divide-y">
-                {logsToDisplay.map((log) => (
+                {pagedLogs.map((log) => (
                   <LogEntry
                     key={log.id}
                     entry={log}
@@ -414,6 +423,44 @@ export const LogViewer = React.memo(function LogViewer({ className, limit = 100 
               onClick={scrollToBottom}
             />
           )}
+         </div>
+
+          {/* Pagination (flat + bookmarked) */}
+          {viewMode !== 'grouped' && logsToDisplay.length > 0 && totalPages > 1 && (
+            <div className="gap-component-sm pt-component-sm flex items-center justify-between border-t pt-3">
+              <span className="text-muted-foreground text-xs tabular-nums">
+                {(effectivePage - 1) * PAGE_SIZE + 1}
+                {'\u2013'}
+                {Math.min(effectivePage * PAGE_SIZE, logsToDisplay.length)} of{' '}
+                {logsToDisplay.length}
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setPage(Math.max(1, effectivePage - 1))}
+                  disabled={effectivePage <= 1}
+                  aria-label="Previous page"
+                >
+                  <Icon icon={ChevronLeft} className="h-4 w-4" aria-hidden="true" />
+                </Button>
+                <span className="text-muted-foreground text-xs tabular-nums">
+                  Page {effectivePage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setPage(Math.min(totalPages, effectivePage + 1))}
+                  disabled={effectivePage >= totalPages}
+                  aria-label="Next page"
+                >
+                  <Icon icon={ChevronRight} className="h-4 w-4" aria-hidden="true" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -423,10 +470,6 @@ export const LogViewer = React.memo(function LogViewer({ className, limit = 100 
         isOpen={!!selectedEntry}
         onClose={() => setSelectedEntry(null)}
         relatedEntries={relatedEntries}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        hasPrevious={currentEntryIndex > 0}
-        hasNext={currentEntryIndex < logsToDisplay.length - 1}
       />
     </div>
   );

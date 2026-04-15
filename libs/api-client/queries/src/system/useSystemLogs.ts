@@ -64,32 +64,13 @@ async function fetchSystemLogs(
 ): Promise<LogEntry[]> {
   const { topics, severities, limit = 100 } = options;
 
-  // Build request body for POST /rest/log/print
-  // MikroTik REST API requires POST with JSON body for print commands
+  // Fetch all recent logs; topic/severity filtering is done client-side below.
+  // RouterOS REST /log/print `.query` doesn't support regex (`~`) matching on
+  // the combined `topics` field, so server-side topic filtering is unreliable.
   const requestBody: Record<string, unknown> = {
     '.proplist': ['.id', 'time', 'topics', 'message'],
   };
 
-  // Build query filters if topics are specified
-  // RouterOS query format: [".query": ["field=value", "field2=value2", "#|"]]
-  // Topics filter uses regex match on the 'topics' field
-  if (topics && topics.length > 0) {
-    // Create OR query for multiple topics: topics~"system", topics~"firewall", "#|"
-    const queryParts: string[] = [];
-    topics.forEach((topic) => {
-      queryParts.push(`topics~${topic}`);
-    });
-    // Add OR operators for multiple topics
-    if (queryParts.length > 1) {
-      // Add (n-1) OR operators to combine all conditions
-      for (let i = 1; i < queryParts.length; i++) {
-        queryParts.push('#|');
-      }
-    }
-    requestBody['.query'] = queryParts;
-  }
-
-  // Use POST method with /log/print endpoint
   const result = await makeRouterOSRequest<RouterOSLogEntry[]>(routerIp, 'log/print', {
     method: 'POST',
     body: requestBody,
@@ -102,7 +83,19 @@ async function fetchSystemLogs(
   // Transform RouterOS response to LogEntry format
   let entries = result.data.map((entry: RouterOSLogEntry) => transformLogEntry(entry));
 
-  // Apply severity filter in frontend (RouterOS topics field combines topic + severity)
+  // Apply topic filter (client-side). RouterOS packs multiple labels into
+  // the raw topics string (e.g. "dhcp,info"); match against the raw string
+  // so we hit entries where the topic isn't the parsed "primary" one.
+  if (topics && topics.length > 0) {
+    const rawById = new Map(result.data.map((e) => [e['.id'], e.topics || '']));
+    entries = entries.filter((entry) => {
+      const raw = rawById.get(entry.id) || '';
+      const rawTokens = raw.split(',').map((t) => t.trim().toLowerCase());
+      return topics.some((t) => rawTokens.includes(t));
+    });
+  }
+
+  // Apply severity filter (client-side)
   if (severities && severities.length > 0) {
     entries = entries.filter((entry) => severities.includes(entry.severity));
   }

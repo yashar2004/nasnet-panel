@@ -6,20 +6,21 @@
 
 import * as React from 'react';
 
-import { Copy, X, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { Copy, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 import type { LogEntry } from '@nasnet/core/types';
 import {
+  Badge,
   Button,
-  cn,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   useToast,
 } from '@nasnet/ui/primitives';
 
-import { topicBadgeVariants } from '../log-entry';
+import { topicToBadgeVariant } from '../log-entry';
 import { SeverityBadge } from '../severity-badge';
 
 export interface LogDetailPanelProps {
@@ -97,23 +98,6 @@ function LogDetailPanelComponent({
     }
   }, [entry, toast]);
 
-  const handleCopyLink = React.useCallback(async () => {
-    if (!entry) return;
-    const url = `${window.location.href.split('#')[0]}#log-${entry.id}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      toast({
-        title: 'Link copied',
-        description: 'Direct link to this log entry has been copied',
-      });
-    } catch {
-      toast({
-        title: 'Failed to copy',
-        variant: 'destructive',
-      });
-    }
-  }, [entry, toast]);
-
   const handleClose = React.useCallback(() => {
     onClose();
   }, [onClose]);
@@ -127,11 +111,20 @@ function LogDetailPanelComponent({
       open={isOpen}
       onOpenChange={(open) => !open && handleClose()}
     >
-      <DialogContent className="max-w-lg sm:max-w-xl">
+      <DialogContent className="max-w-lg sm:max-w-xl" hideDefaultClose>
         <DialogHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <DialogTitle className="text-base">Log Entry Details</DialogTitle>
             <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="gap-2"
+              >
+                <Copy className="h-4 w-4" />
+                Copy Entry
+              </Button>
               {onPrevious && (
                 <Button
                   variant="ghost"
@@ -154,11 +147,21 @@ function LogDetailPanelComponent({
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               )}
+              <DialogClose asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-2 cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </DialogClose>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4 overflow-hidden">
           {/* Timestamp */}
           <div>
             <label
@@ -182,9 +185,12 @@ function LogDetailPanelComponent({
                 Topic
               </label>
               <div className="mt-1">
-                <span className={cn(topicBadgeVariants({ topic: entry.topic }))}>
+                <Badge
+                  variant={topicToBadgeVariant(entry.topic)}
+                  className={entry.topic === 'critical' ? 'font-bold' : undefined}
+                >
                   {formatTopicLabel(entry.topic)}
-                </span>
+                </Badge>
               </div>
             </div>
             <div>
@@ -215,51 +221,34 @@ function LogDetailPanelComponent({
 
           {/* Related entries */}
           {relatedEntries.length > 0 && (
-            <div>
+            <div className="min-w-0">
               <label
                 htmlFor="related-entries-list"
                 className="text-muted-foreground text-xs font-medium uppercase tracking-wide"
               >
                 Related Entries ({relatedEntries.length})
               </label>
-              <div className="mt-1 max-h-32 space-y-1 overflow-y-auto">
+              <div className="mt-1 max-h-32 w-full min-w-0 space-y-1 overflow-y-auto overflow-x-hidden">
                 {relatedEntries.slice(0, 5).map((related) => (
                   <div
                     key={related.id}
-                    className="flex items-center gap-2 rounded bg-slate-50 p-2 text-xs dark:bg-slate-800"
+                    className="flex w-full min-w-0 items-center gap-2 rounded bg-slate-50 p-2 text-xs dark:bg-slate-800"
                   >
-                    <span className="text-muted-foreground font-mono">
+                    <span className="text-muted-foreground shrink-0 font-mono">
                       {new Date(related.timestamp).toLocaleTimeString()}
                     </span>
-                    <SeverityBadge severity={related.severity} />
-                    <span className="flex-1 truncate">{related.message}</span>
+                    <span className="shrink-0">
+                      <SeverityBadge severity={related.severity} />
+                    </span>
+                    <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                      {related.message}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex items-center gap-2 border-t pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopy}
-              className="gap-2"
-            >
-              <Copy className="h-4 w-4" />
-              Copy Entry
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyLink}
-              className="gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Copy Link
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

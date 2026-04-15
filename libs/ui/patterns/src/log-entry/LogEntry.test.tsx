@@ -59,96 +59,69 @@ describe('LogEntry', () => {
   });
 
   describe('Topic Badge Rendering', () => {
-    it('should render firewall topic with correct styling', () => {
+    it('should render firewall topic with error color', () => {
       render(<LogEntry entry={mockLogEntry} />);
 
-      const topicBadge = screen.getByText('firewall');
+      const topicBadge = screen.getByText('Firewall');
       expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-orange');
+      expect(topicBadge.className).toContain('bg-error-light');
     });
 
-    it('should render system topic with correct styling', () => {
-      const systemLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'system',
-      };
+    it('should render system topic with muted color', () => {
+      const systemLog: LogEntryType = { ...mockLogEntry, topic: 'system' };
       render(<LogEntry entry={systemLog} />);
 
-      const topicBadge = screen.getByText('system');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-slate');
+      const topicBadge = screen.getByText('System');
+      expect(topicBadge.className).toContain('bg-muted');
     });
 
-    it('should render wireless topic with correct styling', () => {
-      const wirelessLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'wireless',
-      };
+    it('should render wireless topic with info color', () => {
+      const wirelessLog: LogEntryType = { ...mockLogEntry, topic: 'wireless' };
       render(<LogEntry entry={wirelessLog} />);
 
-      const topicBadge = screen.getByText('wireless');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-purple');
+      const topicBadge = screen.getByText('Wireless');
+      expect(topicBadge.className).toContain('bg-info-light');
     });
 
-    it('should render dhcp topic with correct styling', () => {
-      const dhcpLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'dhcp',
-      };
+    it('should render dhcp topic with success color', () => {
+      const dhcpLog: LogEntryType = { ...mockLogEntry, topic: 'dhcp' };
       render(<LogEntry entry={dhcpLog} />);
 
-      const topicBadge = screen.getByText('dhcp');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-green');
+      const topicBadge = screen.getByText('DHCP');
+      expect(topicBadge.className).toContain('bg-success-light');
     });
 
-    it('should render vpn topic with correct styling', () => {
-      const vpnLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'vpn',
-      };
+    it('should render vpn topic with secondary color', () => {
+      const vpnLog: LogEntryType = { ...mockLogEntry, topic: 'vpn' };
       render(<LogEntry entry={vpnLog} />);
 
-      const topicBadge = screen.getByText('vpn');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-indigo');
+      const topicBadge = screen.getByText('VPN');
+      expect(topicBadge.className).toContain('bg-secondary');
     });
 
-    it('should render critical topic with correct styling', () => {
-      const criticalLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'critical',
-      };
+    it('should render critical topic with error color and bold', () => {
+      const criticalLog: LogEntryType = { ...mockLogEntry, topic: 'critical' };
       render(<LogEntry entry={criticalLog} />);
 
-      const topicBadge = screen.getByText('critical');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-red');
+      const topicBadge = screen.getByText('Critical');
+      expect(topicBadge.className).toContain('bg-error-light');
+      expect(topicBadge.className).toContain('font-bold');
     });
 
-    it('should render warning topic with correct styling', () => {
-      const warningLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'warning',
-      };
+    it('should render warning topic with warning color', () => {
+      const warningLog: LogEntryType = { ...mockLogEntry, topic: 'warning' };
       render(<LogEntry entry={warningLog} />);
 
-      const topicBadge = screen.getByText('warning');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-yellow');
+      const topicBadge = screen.getByText('Warning');
+      expect(topicBadge.className).toContain('bg-warning-light');
     });
 
-    it('should render info topic with correct styling', () => {
-      const infoLog: LogEntryType = {
-        ...mockLogEntry,
-        topic: 'info',
-      };
+    it('should render info topic with info color', () => {
+      const infoLog: LogEntryType = { ...mockLogEntry, topic: 'info' };
       render(<LogEntry entry={infoLog} />);
 
-      const topicBadge = screen.getByText('info');
-      expect(topicBadge).toBeInTheDocument();
-      expect(topicBadge.className).toContain('bg-blue');
+      const topicBadge = screen.getByText('Info');
+      expect(topicBadge.className).toContain('bg-info-light');
     });
   });
 
@@ -371,7 +344,7 @@ describe('LogEntry', () => {
     it('should prevent topic badge from shrinking', () => {
       render(<LogEntry entry={mockLogEntry} />);
 
-      const topicBadge = screen.getByText('firewall');
+      const topicBadge = screen.getByText('Firewall');
       expect(topicBadge.className).toContain('shrink-0');
     });
 

@@ -52,6 +52,20 @@ export const loggingKeys = {
 };
 
 /**
+ * Normalize a RouterOS boolean field. RouterOS returns strings like
+ * "true"/"false"/"yes"/"no"; coerce to a real boolean so React truthiness
+ * checks behave correctly (any non-empty string is truthy otherwise).
+ */
+function toBool(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const v = value.trim().toLowerCase();
+    return v === 'true' || v === 'yes';
+  }
+  return false;
+}
+
+/**
  * Fetch logging rules
  */
 async function fetchLoggingRules(routerIp: string): Promise<LoggingRule[]> {
@@ -61,7 +75,10 @@ async function fetchLoggingRules(routerIp: string): Promise<LoggingRule[]> {
     throw new Error(result.error || 'Failed to fetch logging rules');
   }
 
-  return result.data;
+  return result.data.map((rule) => ({
+    ...rule,
+    disabled: toBool(rule.disabled),
+  }));
 }
 
 /**
@@ -149,7 +166,7 @@ export function useCreateLoggingRule(
     mutationFn: async (input: CreateLoggingRuleInput) => {
       const result = await makeRouterOSRequest<LoggingRule>(routerIp, 'system/logging/add', {
         method: 'POST',
-        body: JSON.stringify(input),
+        body: input,
       });
 
       if (!result.success) {
@@ -176,7 +193,7 @@ export function useUpdateLoggingRule(
     mutationFn: async ({ id, ...input }: UpdateLoggingRuleInput) => {
       const result = await makeRouterOSRequest(routerIp, `system/logging/set`, {
         method: 'POST',
-        body: JSON.stringify({ '.id': id, ...input }),
+        body: { '.id': id, ...input },
       });
 
       if (!result.success) {
@@ -192,21 +209,42 @@ export function useUpdateLoggingRule(
 /**
  * Hook for deleting a logging rule
  */
-export function useDeleteLoggingRule(routerIp: string): UseMutationResult<void, Error, string> {
+export function useDeleteLoggingRule(
+  routerIp: string
+): UseMutationResult<void, Error, string, { previous: LoggingRule[] | undefined }> {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (ruleId: string) => {
-      const result = await makeRouterOSRequest(routerIp, `system/logging/remove`, {
-        method: 'POST',
-        body: JSON.stringify({ '.id': ruleId }),
-      });
+      // RouterOS v7 REST: DELETE /rest/system/logging/<id> is the canonical
+      // way to remove a rule. The CLI-style POST to .../remove with a body
+      // of { numbers: id } or { '.id': id } is accepted inconsistently and
+      // was silently failing here.
+      const result = await makeRouterOSRequest(
+        routerIp,
+        `system/logging/${encodeURIComponent(ruleId)}`,
+        { method: 'DELETE' }
+      );
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to delete logging rule');
       }
     },
-    onSuccess: () => {
+    onMutate: async (ruleId) => {
+      const key = loggingKeys.rules(routerIp);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<LoggingRule[]>(key);
+      queryClient.setQueryData<LoggingRule[]>(key, (old) =>
+        (old ?? []).filter((r) => r['.id'] !== ruleId)
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) {
+        queryClient.setQueryData(loggingKeys.rules(routerIp), ctx.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: loggingKeys.rules(routerIp) });
     },
   });
@@ -217,23 +255,46 @@ export function useDeleteLoggingRule(routerIp: string): UseMutationResult<void, 
  */
 export function useToggleLoggingRule(
   routerIp: string
-): UseMutationResult<void, Error, { id: string; disabled: boolean }> {
+): UseMutationResult<
+  void,
+  Error,
+  { id: string; disabled: boolean },
+  { previous: LoggingRule[] | undefined }
+> {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, disabled }) => {
-      const endpoint = disabled ? 'system/logging/disable' : 'system/logging/enable';
-
-      const result = await makeRouterOSRequest(routerIp, endpoint, {
-        method: 'POST',
-        body: JSON.stringify({ numbers: id }),
-      });
+      // RouterOS v7 REST: PATCH /rest/system/logging/<id> with the field to
+      // change is the canonical form. disabled must be sent as a string.
+      const result = await makeRouterOSRequest(
+        routerIp,
+        `system/logging/${encodeURIComponent(id)}`,
+        {
+          method: 'PATCH',
+          body: { disabled: disabled ? 'true' : 'false' },
+        }
+      );
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to toggle logging rule');
       }
     },
-    onSuccess: () => {
+    onMutate: async ({ id, disabled }) => {
+      const key = loggingKeys.rules(routerIp);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<LoggingRule[]>(key);
+      queryClient.setQueryData<LoggingRule[]>(key, (old) =>
+        (old ?? []).map((r) => (r['.id'] === id ? { ...r, disabled } : r))
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) {
+        queryClient.setQueryData(loggingKeys.rules(routerIp), ctx.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: loggingKeys.rules(routerIp) });
     },
   });
@@ -251,7 +312,7 @@ export function useUpdateLoggingAction(
     mutationFn: async ({ id, ...input }: UpdateLoggingActionInput) => {
       const result = await makeRouterOSRequest(routerIp, `system/logging/action/set`, {
         method: 'POST',
-        body: JSON.stringify({ '.id': id, ...input }),
+        body: { '.id': id, ...input },
       });
 
       if (!result.success) {

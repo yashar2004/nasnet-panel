@@ -47,49 +47,43 @@ describe('SeverityBadge', () => {
   });
 
   describe('Color Styling', () => {
-    it('should apply gray color for debug severity', () => {
+    it('should apply muted color for debug severity', () => {
       render(<SeverityBadge severity="debug" />);
       const badge = screen.getByText('Debug');
-      expect(badge.className).toContain('text-gray');
-      expect(badge.className).toContain('bg-gray');
+      expect(badge.className).toContain('bg-muted');
     });
 
-    it('should apply blue color for info severity', () => {
+    it('should apply info color for info severity', () => {
       render(<SeverityBadge severity="info" />);
       const badge = screen.getByText('Info');
-      expect(badge.className).toContain('text-blue');
-      expect(badge.className).toContain('bg-blue');
+      expect(badge.className).toContain('bg-info-light');
     });
 
-    it('should apply amber color for warning severity', () => {
+    it('should apply warning color for warning severity', () => {
       render(<SeverityBadge severity="warning" />);
       const badge = screen.getByText('Warning');
-      expect(badge.className).toContain('text-amber');
-      expect(badge.className).toContain('bg-amber');
+      expect(badge.className).toContain('bg-warning-light');
     });
 
-    it('should apply red color for error severity', () => {
+    it('should apply error color for error severity', () => {
       render(<SeverityBadge severity="error" />);
       const badge = screen.getByText('Error');
-      expect(badge.className).toContain('text-red');
-      expect(badge.className).toContain('bg-red');
+      expect(badge.className).toContain('bg-error-light');
     });
 
-    it('should apply red and bold for critical severity', () => {
+    it('should apply error color and bold for critical severity', () => {
       render(<SeverityBadge severity="critical" />);
       const badge = screen.getByText('Critical');
-      expect(badge.className).toContain('text-red');
-      expect(badge.className).toContain('bg-red');
+      expect(badge.className).toContain('bg-error-light');
       expect(badge.className).toContain('font-bold');
     });
   });
 
   describe('Read-only Badge (Log Entry)', () => {
-    it('should render as span when no onRemove provided', () => {
-      const { container } = render(<SeverityBadge severity="error" />);
-      const badge = container.querySelector('span');
+    it('should render with status role when no onRemove provided', () => {
+      render(<SeverityBadge severity="error" />);
+      const badge = screen.getByRole('status');
       expect(badge).toBeInTheDocument();
-      expect(badge?.getAttribute('role')).toBe('status');
     });
 
     it('should have aria-label with severity', () => {
@@ -234,11 +228,11 @@ describe('SeverityBadge', () => {
 
     it('should apply unique colors to each severity level', () => {
       allSeverities.forEach((severity) => {
-        const { container, unmount } = render(<SeverityBadge severity={severity} />);
-        const badge = container.querySelector('span');
+        const { unmount } = render(<SeverityBadge severity={severity} />);
+        const badge = screen.getByRole('status');
 
         // Each severity should have distinct color classes
-        expect(badge?.className).toBeTruthy();
+        expect(badge.className).toBeTruthy();
 
         unmount();
       });
@@ -246,20 +240,20 @@ describe('SeverityBadge', () => {
   });
 
   describe('Dark Mode Support', () => {
-    it('should include dark mode classes for debug', () => {
-      render(<SeverityBadge severity="debug" />);
-      const badge = screen.getByText('Debug');
-      expect(badge.className).toContain('dark:');
-    });
-
-    it('should include dark mode classes for all severities', () => {
+    it('should adapt colors for dark mode via dark: classes or CSS token variables', () => {
       const severities: LogSeverity[] = ['debug', 'info', 'warning', 'error', 'critical'];
 
       severities.forEach((severity) => {
         const { unmount } = render(<SeverityBadge severity={severity} />);
         const label = severity.charAt(0).toUpperCase() + severity.slice(1);
         const badge = screen.getByText(label);
-        expect(badge.className).toContain('dark:');
+        // Either a dark: variant class, or semantic tokens that resolve via CSS variables
+        const adapts =
+          badge.className.includes('dark:') ||
+          badge.className.includes('bg-muted') ||
+          badge.className.includes('-light') ||
+          badge.className.includes('-dark');
+        expect(adapts).toBe(true);
         unmount();
       });
     });

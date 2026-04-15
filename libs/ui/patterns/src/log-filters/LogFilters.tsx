@@ -9,11 +9,13 @@ import * as React from 'react';
 import { X, Filter } from 'lucide-react';
 
 import type { LogTopic, LogSeverity } from '@nasnet/core/types';
-import { Button, cn } from '@nasnet/ui/primitives';
+import { Badge, Button, cn } from '@nasnet/ui/primitives';
 
-import { topicBadgeVariants } from '../log-entry';
+import { topicToBadgeVariant } from '../log-entry';
 import { SeverityBadge } from '../severity-badge';
 
+// Severity-named values are excluded from the topic filter since they have
+// their own "Filter by Severity" dropdown.
 const ALL_TOPICS: LogTopic[] = [
   'system',
   'firewall',
@@ -25,10 +27,6 @@ const ALL_TOPICS: LogTopic[] = [
   'interface',
   'route',
   'script',
-  'critical',
-  'info',
-  'warning',
-  'error',
 ];
 
 const ALL_SEVERITIES: LogSeverity[] = ['debug', 'info', 'warning', 'error', 'critical'];
@@ -198,9 +196,12 @@ function LogFiltersComponent({
             <Filter className="h-4 w-4" />
             Filter by Topic
             {topics.length > 0 && (
-              <span className="bg-primary-500 ml-1 rounded-full px-2 py-0.5 text-xs font-semibold text-slate-900">
+              <Badge
+                variant="default"
+                className="ml-1 px-2 py-0 text-[10px] leading-tight"
+              >
                 {topics.length}
-              </span>
+              </Badge>
             )}
           </Button>
 
@@ -221,9 +222,12 @@ function LogFiltersComponent({
                         onChange={() => toggleTopic(topic)}
                         className="h-4 w-4 rounded border-slate-300 dark:border-slate-600"
                       />
-                      <span className={cn(topicBadgeVariants({ topic }), 'shrink-0 text-xs')}>
+                      <Badge
+                        variant={topicToBadgeVariant(topic)}
+                        className={cn('shrink-0', topic === 'critical' && 'font-bold')}
+                      >
                         {formatTopicLabel(topic)}
-                      </span>
+                      </Badge>
                     </label>
                   );
                 })}
@@ -246,9 +250,12 @@ function LogFiltersComponent({
             <Filter className="h-4 w-4" />
             Filter by Severity
             {severities.length > 0 && (
-              <span className="bg-primary-500 ml-1 rounded-full px-2 py-0.5 text-xs font-semibold text-slate-900">
+              <Badge
+                variant="default"
+                className="ml-1 px-2 py-0 text-[10px] leading-tight"
+              >
                 {severities.length}
-              </span>
+              </Badge>
             )}
           </Button>
 
@@ -298,18 +305,27 @@ function LogFiltersComponent({
         <div className="flex flex-wrap gap-2">
           {/* Topic Badges */}
           {topics.map((topic) => (
-            <button
+            <Badge
               key={`topic-${topic}`}
-              onClick={() => removeTopic(topic)}
+              variant={topicToBadgeVariant(topic)}
               className={cn(
-                topicBadgeVariants({ topic }),
-                'group flex cursor-pointer items-center gap-1 transition-opacity hover:opacity-80'
+                'group cursor-pointer gap-1 transition-opacity hover:opacity-80',
+                topic === 'critical' && 'font-bold'
               )}
+              role="button"
+              tabIndex={0}
               aria-label={`Remove ${topic} filter`}
+              onClick={() => removeTopic(topic)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  removeTopic(topic);
+                }
+              }}
             >
               <span>{formatTopicLabel(topic)}</span>
               <X className="h-3 w-3 opacity-70 group-hover:opacity-100" />
-            </button>
+            </Badge>
           ))}
 
           {/* Severity Badges */}

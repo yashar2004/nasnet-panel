@@ -5,3 +5,4 @@
 
 export { LogEntry, topicBadgeVariants } from './LogEntry';
 export type { LogEntryProps } from './LogEntry';
+export { topicToBadgeVariant, severityToBadgeVariant } from './logBadgeVariant';

@@ -74,8 +74,11 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 const DialogContent = React.memo(
   React.forwardRef<
     React.ElementRef<typeof DialogPrimitive.Content>,
-    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
-  >(({ className, children, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+      /** Hide the built-in absolute-positioned close (X) button. Use when providing your own. */
+      hideDefaultClose?: boolean;
+    }
+  >(({ className, children, hideDefaultClose, ...props }, ref) => (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
@@ -87,10 +90,12 @@ const DialogContent = React.memo(
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="hover:bg-accent focus-visible:ring-ring absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-1.5 opacity-70 transition-all duration-200 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
+        {!hideDefaultClose && (
+          <DialogPrimitive.Close className="hover:bg-accent focus-visible:ring-ring absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-1.5 opacity-70 transition-all duration-200 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
       </DialogPrimitive.Content>
     </DialogPortal>
   ))

@@ -10,17 +10,13 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
 
 import type { LogSeverity } from '@nasnet/core/types';
-import { cn } from '@nasnet/ui/primitives';
+import { Badge, cn } from '@nasnet/ui/primitives';
+
+import { severityToBadgeVariant } from '../log-entry';
 
 /**
- * Severity badge variants with color mapping
- * - debug: Gray (low priority, muted)
- * - info: Blue (informational)
- * - warning: Amber/Yellow (attention needed)
- * - error: Red (error occurred)
- * - critical: Red Bold (critical issue)
- *
- * Colors meet WCAG AA contrast requirements
+ * Severity badge variants with color mapping (legacy filter/button mode).
+ * Row rendering uses the shadcn Badge primitive via severityToBadgeVariant().
  */
 const severityBadgeVariants = cva(
   'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors',
@@ -78,38 +74,43 @@ function SeverityBadgeBase({ severity, onRemove, className, ...props }: Severity
   const displayText = severity.charAt(0).toUpperCase() + severity.slice(1);
 
   if (onRemove) {
-    // Filter badge with dismiss button
+    // Filter badge with dismiss button — uses shadcn Badge primitive
     return (
-      <button
-        type="button"
-        onClick={onRemove}
+      <Badge
+        variant={severityToBadgeVariant(severity)}
         className={cn(
-          severityBadgeVariants({ severity }),
-          'focus-visible:ring-ring transition-all hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+          'group cursor-pointer gap-1 transition-opacity hover:opacity-80',
           className
         )}
+        role="button"
+        tabIndex={0}
         aria-label={`Remove ${displayText} filter`}
-        {...props}
+        onClick={onRemove}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onRemove();
+          }
+        }}
       >
         <span>{displayText}</span>
-        <X
-          className="h-3.5 w-3.5"
-          aria-hidden="true"
-        />
-      </button>
+        <X className="h-3 w-3 opacity-70 group-hover:opacity-100" aria-hidden="true" />
+      </Badge>
     );
   }
 
-  // Read-only badge (for log entries)
+  // Read-only badge (for log entries) — uses shadcn Badge primitive
+  const { role, ...rest } = props as React.HTMLAttributes<HTMLSpanElement> & { role?: string };
   return (
-    <span
-      className={cn(severityBadgeVariants({ severity }), className)}
-      role="status"
+    <Badge
+      variant={severityToBadgeVariant(severity)}
+      className={className}
+      role={role ?? 'status'}
       aria-label={`Severity: ${displayText}`}
-      {...props}
+      {...rest}
     >
       {displayText}
-    </span>
+    </Badge>
   );
 }
 

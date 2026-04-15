@@ -6,18 +6,19 @@
 
 import * as React from 'react';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { Copy, Pin, Check } from 'lucide-react';
 
 import type { LogEntry as LogEntryType, LogTopic } from '@nasnet/core/types';
 import { formatTimestamp } from '@nasnet/core/utils';
-import { cn } from '@nasnet/ui/primitives';
+import { Badge, cn } from '@nasnet/ui/primitives';
 
 import { SeverityBadge } from '../severity-badge';
+import { topicToBadgeVariant } from './logBadgeVariant';
 
 /**
- * Topic badge styling variants
- * Maps LogTopic to color classes
+ * Topic badge styling variants (legacy CVA, retained for LogFilters/LogDetailPanel back-compat).
+ * Row badges in LogEntry now use the shadcn Badge primitive via topicToBadgeVariant().
  */
 const topicBadgeVariants = cva(
   'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset transition-colors',
@@ -192,9 +193,12 @@ export const LogEntry = React.memo(
                 {formatTimestamp(timestamp, showDate)}
               </time>
               <SeverityBadge severity={severity} />
-              <span className={cn(topicBadgeVariants({ topic }), 'px-1.5 py-0 text-[10px]')}>
+              <Badge
+                variant={topicToBadgeVariant(topic)}
+                className={cn('px-1.5 py-0 text-[10px]', topic === 'critical' && 'font-bold')}
+              >
                 {formatTopicLabel(topic)}
-              </span>
+              </Badge>
 
               {/* Actions */}
               <div className="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
@@ -252,9 +256,12 @@ export const LogEntry = React.memo(
           </time>
 
           {/* Topic Badge - hidden on small screens */}
-          <span className={cn(topicBadgeVariants({ topic }), 'hidden shrink-0 sm:inline-flex')}>
+          <Badge
+            variant={topicToBadgeVariant(topic)}
+            className={cn('hidden shrink-0 sm:inline-flex', topic === 'critical' && 'font-bold')}
+          >
             {formatTopicLabel(topic)}
-          </span>
+          </Badge>
 
           {/* Severity Badge */}
           <SeverityBadge severity={severity} />
