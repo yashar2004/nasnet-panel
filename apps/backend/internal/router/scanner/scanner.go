@@ -62,13 +62,8 @@ func ScanIP(ctx context.Context, ip string, ports []int, timeout time.Duration) 
 			sem <- struct{}{}
 			defer func() { <-sem }()
 
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				if IsPortOpen(ctx, ip, p, timeout) {
-					portChan <- p
-				}
+			if IsPortOpen(ctx, ip, p, timeout) {
+				portChan <- p
 			}
 		}(port)
 	}
@@ -154,7 +149,6 @@ func IsPortOpen(ctx context.Context, ip string, port int, timeout time.Duration)
 		return false
 	}
 	_ = conn.Close()
-
 	return true
 }
 

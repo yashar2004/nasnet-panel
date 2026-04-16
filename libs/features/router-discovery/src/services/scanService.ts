@@ -42,6 +42,7 @@ interface ScanStatusResponse {
  * Configuration for scan service
  */
 const SCAN_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+const BASE_URL= import.meta.env.VITE_APP_URL || 'http://localhost:5173';
 const SCAN_POLL_INTERVAL_MS = 500; // Poll every 500ms
 const SCAN_MAX_POLL_ATTEMPTS = 600; // Max 5 minutes (600 * 500ms)
 
@@ -71,12 +72,12 @@ export async function startNetworkScan(
 ): Promise<ScanResult[]> {
   try {
     // Initiate scan on backend
-    const response = await fetch(`${SCAN_BACKEND_URL}/api/scan`, {
+    const response = await fetch(`${BASE_URL}/api/scan`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ip_range: subnet }),
+      body: JSON.stringify({ subnet: subnet }),
     });
 
     if (!response.ok) {
@@ -127,7 +128,7 @@ async function pollScanStatus(
 
   while (attempts < SCAN_MAX_POLL_ATTEMPTS) {
     try {
-      const response = await fetch(`${SCAN_BACKEND_URL}/api/scan/${taskId}`);
+      const response = await fetch(`${BASE_URL}/api/scan/status?task_id=${taskId}`);
 
       if (!response.ok) {
         throw new ScanError(
