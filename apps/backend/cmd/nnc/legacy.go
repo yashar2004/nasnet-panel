@@ -35,7 +35,7 @@ const statusCompleted = "completed"
 var scanner = &Scanner{
 	tasks:       make(map[string]*ScanTask),
 	maxWorkers:  20,
-	timeout:     2 * time.Second,
+	timeout:     200 * time.Millisecond,
 	targetPorts: []int{80, 443, 8728, 8729, 8291},
 }
 
@@ -177,17 +177,17 @@ func processScanTask(ctx context.Context, task *ScanTask) {
 	totalIPs := len(ips)
 	jobs := make(chan string, totalIPs)
 	results := make(chan Device, totalIPs)
+	processed := make(chan struct{}, totalIPs)
 	var wg sync.WaitGroup
 	for i := 0; i < scanner.maxWorkers; i++ {
 		wg.Add(1)
 		go func(workerID int) {
 			defer wg.Done()
-			scannedCount := 0
 			for ip := range jobs {
-				scannedCount++
 				if device := pkgScanner.ScanIP(scanCtx, ip, scanner.targetPorts, scanner.timeout); device != nil {
 					results <- *device
 				}
+				processed <- struct{}{}
 			}
 		}(i)
 	}
@@ -196,7 +196,6 @@ func processScanTask(ctx context.Context, task *ScanTask) {
 		close(results)
 	}()
 
-	processed := 0
 	var deviceResults []Device
 	var resultsDone sync.WaitGroup
 	resultsDone.Add(1)
@@ -204,22 +203,29 @@ func processScanTask(ctx context.Context, task *ScanTask) {
 		defer resultsDone.Done()
 		for device := range results {
 			task.mu.Lock()
-			task.Progress = (processed * 100) / totalIPs
 			deviceResults = append(deviceResults, device)
 			task.Results = deviceResults
 			task.mu.Unlock()
 		}
 	}()
+	processedCount := 0
+	go func() {
+		for range processed {
+			processedCount++
+			task.mu.Lock()
+			task.Progress = (processedCount * 100) / totalIPs
+			task.mu.Unlock()
+		}
+	}()
 	go func() {
 		defer close(jobs)
-		sentCount := 0
 		for _, ip := range ips {
 			jobs <- ip
-			sentCount++
-			if sentCount%50 == 0 {
-				//fmt.Printf("DEBUG: Sent %d IPs\n", sentCount)
-			}
 		}
+	}()
+	go func() {
+		wg.Wait()
+		close(processed)
 	}()
 	wg.Wait()
 	resultsDone.Wait()
