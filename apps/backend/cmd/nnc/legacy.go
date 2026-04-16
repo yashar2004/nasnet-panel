@@ -158,6 +158,8 @@ func processGatewayScanTask(ctx context.Context, task *ScanTask) {
 }
 
 func processScanTask(ctx context.Context, task *ScanTask) {
+	scanCtx := context.Background()
+
 	ips, err := pkgScanner.ParseIPRange(task.Subnet)
 	if err != nil {
 		task.mu.Lock()
@@ -173,32 +175,34 @@ func processScanTask(ctx context.Context, task *ScanTask) {
 		return
 	}
 	totalIPs := len(ips)
-	jobs := make(chan string, scanner.maxWorkers)
-	results := make(chan Device, scanner.maxWorkers)
+	jobs := make(chan string, totalIPs)
+	results := make(chan Device, totalIPs)
 	var wg sync.WaitGroup
 	for i := 0; i < scanner.maxWorkers; i++ {
 		wg.Add(1)
-		go func() {
+		go func(workerID int) {
 			defer wg.Done()
+			scannedCount := 0
 			for ip := range jobs {
-				select {
-				case <-ctx.Done():
-					return
-				default:
-					if device := pkgScanner.ScanIP(ctx, ip, scanner.targetPorts, scanner.timeout); device != nil {
-						results <- *device
-					}
+				scannedCount++
+				if device := pkgScanner.ScanIP(scanCtx, ip, scanner.targetPorts, scanner.timeout); device != nil {
+					results <- *device
 				}
 			}
-		}()
+		}(i)
 	}
-	go func() { wg.Wait(); close(results) }()
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 
 	processed := 0
 	var deviceResults []Device
+	var resultsDone sync.WaitGroup
+	resultsDone.Add(1)
 	go func() {
+		defer resultsDone.Done()
 		for device := range results {
-			processed++
 			task.mu.Lock()
 			task.Progress = (processed * 100) / totalIPs
 			deviceResults = append(deviceResults, device)
@@ -208,15 +212,17 @@ func processScanTask(ctx context.Context, task *ScanTask) {
 	}()
 	go func() {
 		defer close(jobs)
+		sentCount := 0
 		for _, ip := range ips {
-			select {
-			case <-ctx.Done():
-				return
-			case jobs <- ip:
+			jobs <- ip
+			sentCount++
+			if sentCount%50 == 0 {
+				//fmt.Printf("DEBUG: Sent %d IPs\n", sentCount)
 			}
 		}
 	}()
 	wg.Wait()
+	resultsDone.Wait()
 	task.mu.Lock()
 	task.Status = statusCompleted
 	task.Progress = 100
