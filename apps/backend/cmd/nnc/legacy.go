@@ -8,7 +8,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -31,6 +33,18 @@ type Scanner struct {
 }
 
 const statusCompleted = "completed"
+
+func ipToInt(ip string) uint32 {
+	parsedIP := net.ParseIP(ip)
+	if parsedIP == nil {
+		return 0
+	}
+	ipv4 := parsedIP.To4()
+	if ipv4 == nil {
+		return 0
+	}
+	return uint32(ipv4[0])<<24 | uint32(ipv4[1])<<16 | uint32(ipv4[2])<<8 | uint32(ipv4[3])
+}
 
 var scanner = &Scanner{
 	tasks:       make(map[string]*ScanTask),
@@ -84,8 +98,14 @@ func handleScanStatus(w http.ResponseWriter, r *http.Request) {
 	task.mu.RLock()
 	status := task.Status
 	progress := task.Progress
-	results := task.Results
+	results := make([]Device, len(task.Results))
+	copy(results, task.Results)
 	task.mu.RUnlock()
+
+	sort.Slice(results, func(i, j int) bool {
+		return ipToInt(results[i].IP) < ipToInt(results[j].IP)
+	})
+
 	writeJSONResponse(w, http.StatusOK, map[string]interface{}{
 		"task_id": task.ID, "subnet": task.Subnet, "start_time": task.StartTime.Unix(),
 		"status": status, "progress": progress, "results": results,
