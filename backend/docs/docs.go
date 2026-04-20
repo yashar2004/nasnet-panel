@@ -141,6 +141,180 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/scan": {
+            "post": {
+                "description": "Start scanning a subnet for RouterOS devices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scanner"
+                ],
+                "summary": "Start network scan",
+                "parameters": [
+                    {
+                        "description": "Subnet to scan",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.ScanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Scan started",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/scan/auto": {
+            "post": {
+                "description": "Start automatic scan for RouterOS devices on gateway",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scanner"
+                ],
+                "summary": "Start auto gateway scan",
+                "responses": {
+                    "200": {
+                        "description": "Auto scan started",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/scan/status": {
+            "get": {
+                "description": "Get the status and results of a network scan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scanner"
+                ],
+                "summary": "Get scan status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID from scan start",
+                        "name": "task_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Scan status",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/scan/stop": {
+            "post": {
+                "description": "Stop an ongoing network scan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scanner"
+                ],
+                "summary": "Stop network scan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID from scan start",
+                        "name": "task_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Scan stopped",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/system/identity": {
             "get": {
                 "security": [
@@ -1158,6 +1332,14 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.ScanRequest": {
+            "type": "object",
+            "properties": {
+                "subnet": {
+                    "type": "string"
+                }
+            }
+        },
         "handler.SetSystemIdentityRequest": {
             "type": "object",
             "properties": {
@@ -1188,8 +1370,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
-	Title:            "NASNET-Backend API",
-	Description:      "RouterOS Network Management Server - REST API for managing RouterOS devices",
+	Title:            "NASNET-Panel API",
+	Description:      "RouterOS Network Management Panel - REST API for managing RouterOS devices",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -49,4 +49,12 @@ func RegisterRoutes(e *echo.Echo) {
 	{
 		firewallGroup.GET("/rules", handler.HandleListFirewallRules)
 	}
+
+	scanGroup := e.Group("/api/scan")
+	{
+		scanGroup.POST("", handler.HandleStartScan)
+		scanGroup.GET("/status", handler.HandleScanStatus)
+		scanGroup.POST("/stop", handler.HandleStopScan)
+		scanGroup.POST("/auto", handler.HandleAutoScan)
+	}
 }
