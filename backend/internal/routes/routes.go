@@ -56,5 +56,6 @@ func RegisterRoutes(e *echo.Echo) {
 		scanGroup.GET("/status", handler.HandleScanStatus)
 		scanGroup.POST("/stop", handler.HandleStopScan)
 		scanGroup.POST("/auto", handler.HandleAutoScan)
+		scanGroup.POST("/verify", handler.HandleVerifyIP)
 	}
 }

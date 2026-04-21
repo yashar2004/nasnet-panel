@@ -159,6 +159,65 @@ func CheckRouterOSAPI(ctx context.Context, ip string, port int, timeout time.Dur
 	return nil
 }
 
+func CheckNativeRouterOSAPI(ctx context.Context, ip string, port int, timeout time.Duration) *RouterOSInfo {
+	address := net.JoinHostPort(ip, fmt.Sprintf("%d", port))
+	conn, err := net.DialTimeout("tcp", address, timeout)
+	if err != nil {
+		return nil
+	}
+	defer conn.Close()
+
+	confidenceScore := 40
+	if port == 8729 {
+		confidenceScore = 45
+	}
+
+	return &RouterOSInfo{
+		IsValid:    true,
+		Confidence: confidenceScore,
+	}
+}
+
+func CheckWinBoxAPI(ctx context.Context, ip string, port int, timeout time.Duration) *RouterOSInfo {
+	address := net.JoinHostPort(ip, fmt.Sprintf("%d", port))
+	conn, err := net.DialTimeout("tcp", address, timeout)
+	if err != nil {
+		return nil
+	}
+	defer conn.Close()
+
+	return &RouterOSInfo{
+		IsValid:    true,
+		Confidence: 50,
+	}
+}
+
+func CalculateNativeAPIConfidence(openPorts []int) int {
+	has8728 := ContainsPort(openPorts, 8728)
+	has8729 := ContainsPort(openPorts, 8729)
+	has8291 := ContainsPort(openPorts, 8291)
+
+	if has8728 && has8729 && has8291 {
+		return 95
+	}
+	if (has8728 || has8729) && has8291 {
+		return 85
+	}
+	if has8728 && has8729 {
+		return 80
+	}
+	if has8729 {
+		return 50
+	}
+	if has8291 {
+		return 50
+	}
+	if has8728 {
+		return 40
+	}
+	return 0
+}
+
 func ScanGatewayIP(ctx context.Context, ip string, ports []int, timeout time.Duration) *Device {
 	var openPorts []int
 	var services []string
@@ -174,7 +233,15 @@ func ScanGatewayIP(ctx context.Context, ip string, ports []int, timeout time.Dur
 				services = append(services, GetServiceName(port))
 
 				if routerOSInfo == nil {
-					if info := CheckRouterOSAPI(ctx, ip, port, timeout); info != nil {
+					if port == 8728 || port == 8729 {
+						if info := CheckNativeRouterOSAPI(ctx, ip, port, timeout); info != nil {
+							routerOSInfo = info
+						}
+					} else if port == 8291 {
+						if info := CheckWinBoxAPI(ctx, ip, port, timeout); info != nil {
+							routerOSInfo = info
+						}
+					} else if info := CheckRouterOSAPI(ctx, ip, port, timeout); info != nil {
 						routerOSInfo = info
 					}
 				}
@@ -183,6 +250,11 @@ func ScanGatewayIP(ctx context.Context, ip string, ports []int, timeout time.Dur
 	}
 
 	if routerOSInfo != nil && routerOSInfo.IsValid {
+		confidence := CalculateNativeAPIConfidence(openPorts)
+		if confidence > 0 {
+			routerOSInfo.Confidence = confidence
+		}
+
 		hostname := ""
 		resolver := &net.Resolver{}
 		if names, err := resolver.LookupAddr(ctx, ip); err == nil && len(names) > 0 {

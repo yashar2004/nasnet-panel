@@ -41,6 +41,77 @@ var (
 	statusCompleted = "completed"
 )
 
+// HandleVerifyIP godoc
+// @Summary Verify single IP
+// @Description Check if a single IP is a MikroTik device and its online status
+// @Tags Scanner
+// @Accept json
+// @Produce json
+// @Param request body IPVerifyRequest true "IP to verify"
+// @Success 200 {object} map[string]interface{} "IP verification result"
+// @Failure 400 {object} map[string]interface{} "Bad request"
+// @Router /api/scan/verify [post]
+func HandleVerifyIP(c echo.Context) error {
+	var req IPVerifyRequest
+	if err := c.Bind(&req); err != nil {
+		return ErrorResponse(c, http.StatusBadRequest, "Invalid request format", err)
+	}
+
+	if req.IP == "" {
+		return ErrorResponse(c, http.StatusBadRequest, "IP parameter is required", nil)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	device := pkgScanner.ScanIP(ctx, req.IP, scanConfig.TargetPorts, scanConfig.Timeout)
+
+	var result IPVerifyResponse
+	result.IP = req.IP
+
+	if device == nil {
+		result.IsOnline = false
+		result.IsMikroTik = false
+		return SuccessResponse(c, http.StatusOK, "IP verification completed", result)
+	}
+
+	result.Hostname = device.Hostname
+	result.IsOnline = true
+	result.IsMikroTik = device.Vendor == "MikroTik"
+	result.Ports = device.Ports
+	result.Services = device.Services
+
+	if result.IsMikroTik {
+		for _, port := range []int{80, 443, 8728, 8729, 8291} {
+			if pkgScanner.ContainsPort(device.Ports, port) {
+				var info *pkgScanner.RouterOSInfo
+				if port == 8728 || port == 8729 {
+					info = pkgScanner.CheckNativeRouterOSAPI(ctx, req.IP, port, scanConfig.Timeout)
+				} else if port == 8291 {
+					info = pkgScanner.CheckWinBoxAPI(ctx, req.IP, port, scanConfig.Timeout)
+				} else {
+					info = pkgScanner.CheckRouterOSAPI(ctx, req.IP, port, scanConfig.Timeout)
+				}
+				if info != nil {
+					confidence := pkgScanner.CalculateNativeAPIConfidence(device.Ports)
+					if confidence > 0 {
+						info.Confidence = confidence
+					}
+					result.RouterOS = &RouterOSVerifyInfo{
+						Version:      info.Version,
+						Architecture: info.Architecture,
+						BoardName:    info.BoardName,
+						Confidence:   info.Confidence,
+					}
+					break
+				}
+			}
+		}
+	}
+
+	return SuccessResponse(c, http.StatusOK, "IP verification completed", result)
+}
+
 // HandleStartScan godoc
 // @Summary Start network scan
 // @Description Start scanning a subnet for RouterOS devices

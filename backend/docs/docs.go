@@ -315,6 +315,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/scan/verify": {
+            "post": {
+                "description": "Check if a single IP is a MikroTik device and its online status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scanner"
+                ],
+                "summary": "Verify single IP",
+                "parameters": [
+                    {
+                        "description": "IP to verify",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.IPVerifyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "IP verification result",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/system/identity": {
             "get": {
                 "security": [
@@ -1328,6 +1370,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "passphrase": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.IPVerifyRequest": {
+            "type": "object",
+            "properties": {
+                "ip": {
                     "type": "string"
                 }
             }

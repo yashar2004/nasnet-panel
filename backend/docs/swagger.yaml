@@ -12,6 +12,11 @@ definitions:
       passphrase:
         type: string
     type: object
+  handler.IPVerifyRequest:
+    properties:
+      ip:
+        type: string
+    type: object
   handler.ScanRequest:
     properties:
       subnet:
@@ -234,6 +239,34 @@ paths:
             additionalProperties: true
             type: object
       summary: Stop network scan
+      tags:
+      - Scanner
+  /api/scan/verify:
+    post:
+      consumes:
+      - application/json
+      description: Check if a single IP is a MikroTik device and its online status
+      parameters:
+      - description: IP to verify
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.IPVerifyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: IP verification result
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Verify single IP
       tags:
       - Scanner
   /api/system/identity:
