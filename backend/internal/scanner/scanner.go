@@ -41,8 +41,7 @@ func DefaultConfig() Config {
 	}
 }
 
-// HTTPAPIPorts are ports used for automatic gateway scanning.
-var HTTPAPIPorts = []int{80, 443, 8728, 8729, 8291}
+var MikrotikServicePorts = []int{80, 443, 8728, 8729, 8291}
 
 // ScanIP scans a single IP for open ports and identifies MikroTik devices.
 func ScanIP(ctx context.Context, ip string, ports []int, timeout time.Duration) *Device { //nolint:gocyclo // port scanning logic

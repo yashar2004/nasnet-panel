@@ -245,7 +245,7 @@ func ProcessGatewayScan(ctx context.Context, cfg Config, resultFn func(Device)) 
 				case <-ctx.Done():
 					return
 				default:
-					if device := ScanGatewayIP(ctx, ip, HTTPAPIPorts, cfg.Timeout); device != nil {
+					if device := ScanGatewayIP(ctx, ip, MikrotikServicePorts, cfg.Timeout); device != nil {
 						results <- *device
 					}
 				}
