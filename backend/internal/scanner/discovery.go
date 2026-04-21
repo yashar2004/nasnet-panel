@@ -159,7 +159,6 @@ func CheckRouterOSAPI(ctx context.Context, ip string, port int, timeout time.Dur
 	return nil
 }
 
-// ScanGatewayIP scans a single gateway IP specifically for RouterOS devices.
 func ScanGatewayIP(ctx context.Context, ip string, ports []int, timeout time.Duration) *Device {
 	var openPorts []int
 	var services []string
@@ -174,9 +173,10 @@ func ScanGatewayIP(ctx context.Context, ip string, ports []int, timeout time.Dur
 				openPorts = append(openPorts, port)
 				services = append(services, GetServiceName(port))
 
-				if info := CheckRouterOSAPI(ctx, ip, port, timeout); info != nil {
-					routerOSInfo = info
-					break
+				if routerOSInfo == nil {
+					if info := CheckRouterOSAPI(ctx, ip, port, timeout); info != nil {
+						routerOSInfo = info
+					}
 				}
 			}
 		}
