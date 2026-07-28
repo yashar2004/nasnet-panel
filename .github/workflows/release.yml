@@ -124,3 +124,109 @@ jobs:
               "${{ env.IMAGE }}:${BASE}-arm64" \
               "${{ env.IMAGE }}:${BASE}-armv7"
           done <<< "${{ steps.meta.outputs.tags }}"
+
+  package:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: read
+    steps:
+      - name: Determine release version
+        id: version
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BASE="${{ inputs.tag }}"
+            TAG_NAME="${{ inputs.tag }}"
+          else
+            BASE="${GITHUB_REF_NAME#v}"
+            TAG_NAME="${GITHUB_REF_NAME}"
+          fi
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Install skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      - name: Log in to ${{ env.REGISTRY }}
+        run: skopeo login "${{ env.REGISTRY }}" -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Package per-arch RouterOS container tars
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.version.outputs.base }}"
+          mkdir -p dist
+          for SUFFIX in amd64 arm64 armv7; do
+            REF="${IMAGE}:${BASE}-${SUFFIX}"
+            OUT="nasnet-panel-${BASE}-${SUFFIX}.tar"
+            echo "-> ${REF} => dist/${OUT}"
+            skopeo copy "docker://${REF}" "docker-archive:dist/${OUT}:nasnet-panel:${BASE}-${SUFFIX}"
+            ( cd dist && sha256sum "${OUT}" > "${OUT}.sha256" )
+          done
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: nasnet-panel ${{ steps.version.outputs.base }}
+          prerelease: false
+          body: |
+            Release build of nasnet-panel ${{ steps.version.outputs.base }}.
+            Commit ${{ github.sha }}.
+
+            RouterOS container image tars consumed by `scripts/install.sh`:
+            - `nasnet-panel-${{ steps.version.outputs.base }}-amd64.tar` (RouterOS x86_64)
+            - `nasnet-panel-${{ steps.version.outputs.base }}-arm64.tar` (RouterOS arm64)
+            - `nasnet-panel-${{ steps.version.outputs.base }}-armv7.tar` (RouterOS arm)
+
+            Windows GUI installer:
+            - `nasnet-panel-installer-windows-amd64.exe`
+          files: |
+            dist/*.tar
+            dist/*.tar.sha256
+
+  installer:
+    needs: package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-go-backend
+        with:
+          go-version-file: installer/windows/go.mod
+          cache-dependency-path: installer/windows/go.sum
+
+      - name: Build Windows installer
+        working-directory: installer/windows
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 \
+            go build -trimpath -tags desktop,production \
+            -ldflags "-s -w -H windowsgui" \
+            -o dist/nasnet-panel-installer-windows-amd64.exe .
+          ( cd dist && sha256sum nasnet-panel-installer-windows-amd64.exe > nasnet-panel-installer-windows-amd64.exe.sha256 )
+
+      - name: Determine release tag
+        id: version
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag_name=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag_name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish installer to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          prerelease: false
+          files: |
+            installer/windows/dist/*.exe
+            installer/windows/dist/*.exe.sha256
